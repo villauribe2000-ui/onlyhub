@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	addPostLikesAction,
 	getAllPostsForAdminAction,
+	getAllUsersAction,
 	removePostLikesAction,
 	setPostLikesAction,
 } from "../actions";
@@ -25,6 +26,11 @@ const LikesTab = () => {
 	const { data: posts, isLoading: postsLoading } = useQuery({
 		queryKey: ["admin-posts"],
 		queryFn: () => getAllPostsForAdminAction(),
+	});
+
+	const { data: allUsers, isLoading: usersLoading } = useQuery({
+		queryKey: ["admin-users"],
+		queryFn: () => getAllUsersAction(),
 	});
 
 	const { mutate: setLikes, isPending: isSavingLikes } = useMutation({
@@ -63,21 +69,15 @@ const LikesTab = () => {
 		},
 	});
 
-	// Get unique users from posts
+	// Get all users from database
 	const users = useMemo(() => {
-		if (!posts) return [];
-		const userMap = new Map();
-		posts.forEach((post: any) => {
-			if (post.user && !userMap.has(post.user.id)) {
-				userMap.set(post.user.id, post.user);
-			}
-		});
-		return Array.from(userMap.values());
-	}, [posts]);
+		if (!allUsers) return [];
+		return allUsers;
+	}, [allUsers]);
 
 	// Filter users by search
 	const filteredUsers = useMemo(() => {
-		if (!searchUser.trim()) return users;
+		if (!searchUser.trim()) return users.slice(0, 20); // Show first 20 users when no search
 		const query = searchUser.toLowerCase();
 		return users.filter((user: any) => 
 			user.name?.toLowerCase().includes(query) || 
@@ -92,7 +92,7 @@ const LikesTab = () => {
 		return posts.filter((post: any) => post.userId === selectedUserId);
 	}, [posts, selectedUserId]);
 
-	if (postsLoading) {
+	if (postsLoading || usersLoading) {
 		return <p className='text-center mt-10 text-muted-foreground'>Cargando...</p>;
 	}
 
@@ -131,9 +131,14 @@ const LikesTab = () => {
 							</div>
 						</button>
 					))}
-					{filteredUsers.length === 0 && (
+					{filteredUsers.length === 0 && searchUser.trim() && (
 						<p className='text-sm text-muted-foreground text-center py-4'>
-							No se encontraron usuarios
+							No se encontraron usuarios con "{searchUser}"
+						</p>
+					)}
+					{users.length === 0 && !searchUser.trim() && (
+						<p className='text-sm text-muted-foreground text-center py-4'>
+							No hay usuarios registrados
 						</p>
 					)}
 				</div>

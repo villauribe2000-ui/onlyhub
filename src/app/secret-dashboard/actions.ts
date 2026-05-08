@@ -454,6 +454,17 @@ export async function getAllPostsForAdminAction() {
 			text: true,
 			likes: true,
 			userId: true,
+			mediaUrl: true,
+			mediaType: true,
+			user: {
+				select: {
+					id: true,
+					name: true,
+					username: true,
+					email: true,
+					image: true,
+				},
+			},
 		},
 		take: 100,
 	});
