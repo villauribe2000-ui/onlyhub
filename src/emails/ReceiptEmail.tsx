@@ -110,7 +110,7 @@ export const ReceiptEmail = ({
 					</Row>
 					<Row>
 						<Text style={footer.text}>
-							© {new Date().getFullYear()} OnlyHorse, Inc. All Rights Reserved.
+							© {new Date().getFullYear()} OnlyHub, Inc. All Rights Reserved.
 						</Text>
 					</Row>
 				</Section>

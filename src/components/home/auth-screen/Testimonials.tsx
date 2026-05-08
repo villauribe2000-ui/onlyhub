@@ -6,37 +6,37 @@ const reviews = [
 	{
 		name: "Jack",
 		username: "@jack",
-		body: "The horse care tips are incredibly helpful. Love this site!",
+		body: "The content is amazing. Best platform I've subscribed to!",
 		img: "https://avatar.vercel.sh/jack",
 	},
 	{
 		name: "Jill",
 		username: "@jill",
-		body: "Fantastic insights on horse training. Highly recommend!",
+		body: "Incredible exclusive content. Highly recommend OnlyHub!",
 		img: "https://avatar.vercel.sh/jill",
 	},
 	{
 		name: "John",
 		username: "@john",
-		body: "Great community for horse lovers. Very informative!",
+		body: "Great creators and amazing content. Very addictive!",
 		img: "https://avatar.vercel.sh/john",
 	},
 	{
 		name: "Jane",
 		username: "@jane",
-		body: "Wonderful content about daily farm life. Amazing!",
+		body: "The behind-the-scenes content is just stunning. I love it!",
 		img: "https://avatar.vercel.sh/jane",
 	},
 	{
 		name: "Jenny",
 		username: "@jenny",
-		body: "The exclusive footage is just stunning. I love it!",
+		body: "Worth every penny. The exclusive content is top notch!",
 		img: "https://avatar.vercel.sh/jenny",
 	},
 	{
 		name: "James",
 		username: "@james",
-		body: "Horse health tips are spot on. Very useful website!",
+		body: "Best subscription I have. The creators are amazing!",
 		img: "https://avatar.vercel.sh/james",
 	},
 ];

@@ -59,7 +59,7 @@ const AddNewProductForm = () => {
 							<Input
 								id='name'
 								type='text'
-								placeholder='OnlyHorse Special'
+								placeholder='OnlyHub Special'
 								required
 								value={name}
 								onChange={(e) => setName(e.target.value)}
@@ -102,7 +102,7 @@ const AddNewProductForm = () => {
 						)}
 					</CardContent>
 					<CardFooter>
-						<Button className='w-full' type='submit' disabled={isPending}>
+						<Button className='w-full bg-primary text-primary-foreground hover:bg-primary/90' type='submit' disabled={isPending}>
 							{isPending ? "Adding..." : "Add Product"}
 						</Button>
 					</CardFooter>

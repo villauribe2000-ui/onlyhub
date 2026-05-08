@@ -10,13 +10,37 @@ export async function getPostsAction() {
 	if (!user) throw new Error("Unauthorized");
 
 	const posts = await prisma.post.findMany({
+		where: {
+			isPublic: true,
+		},
 		include: {
-			comments: {
-				include: {
-					user: true,
-				},
-			},
+			user: true,
 			likesList: { where: { userId: user.id } },
+		},
+		orderBy: {
+			createdAt: "desc",
+		},
+	});
+
+	return posts;
+}
+
+export async function getPostsByUserIdAction(userId: string) {
+	const { getUser } = getKindeServerSession();
+	const user = await getUser();
+
+	if (!user) throw new Error("Unauthorized");
+
+	const posts = await prisma.post.findMany({
+		where: {
+			userId: userId,
+		},
+		include: {
+			user: true,
+			likesList: { where: { userId: user.id } },
+		},
+		orderBy: {
+			createdAt: "desc",
 		},
 	});
 
@@ -43,9 +67,6 @@ export async function likePostAction(postId: string) {
 	if (!user) {
 		throw new Error("Unauthorized");
 	}
-
-	const userProfile = await prisma.user.findUnique({ where: { id: user.id } });
-	if (!userProfile?.isSubscribed) return;
 
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -75,22 +96,58 @@ export async function likePostAction(postId: string) {
 	return { success: true };
 }
 
-export async function commentOnPostAction(postId: string, text: string) {
+export async function createDonationAction(creatorId: string, amountInCents: number) {
 	const { getUser } = getKindeServerSession();
 	const user = await getUser();
 
 	if (!user) throw new Error("Unauthorized");
 
-	const userProfile = await prisma.user.findUnique({ where: { id: user.id } });
-	if (!userProfile?.isSubscribed) return;
+	// Get user's balance
+	const donor = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { balance: true },
+	});
 
-	const comment = await prisma.comment.create({
+	if (!donor) throw new Error("Donor not found");
+
+	// Check if user has enough balance
+	if (donor.balance < amountInCents) {
+		throw new Error("Insufficient balance. Please reload your wallet.");
+	}
+
+	// Deduct from donor's balance
+	await prisma.user.update({
+		where: { id: user.id },
 		data: {
-			text,
-			postId,
-			userId: user.id,
+			balance: { decrement: amountInCents },
 		},
 	});
 
-	return { success: true };
+	// Create a donation record
+	const donation = await prisma.donation.create({
+		data: {
+			amount: amountInCents,
+			userId: user.id,
+			creatorId: creatorId,
+		},
+	});
+
+	// Update creator's balance
+	await prisma.user.update({
+		where: { id: creatorId },
+		data: {
+			balance: { increment: amountInCents },
+		},
+	});
+
+	// Send notification to creator
+	await prisma.notification.create({
+		data: {
+			userId: creatorId,
+			title: "💰 Nueva donación",
+			message: `Has recibido una donación de ${(amountInCents / 100).toFixed(2)} de ${user.name}.`,
+		},
+	});
+
+	return { success: true, donation };
 }

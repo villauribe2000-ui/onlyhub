@@ -22,21 +22,10 @@ const MasonryGrid = () => {
 				{[...Array(15)].map((_, i) => (
 					<div
 						key={i}
-						className='relative overflow-hidden rounded-md'
-						onMouseEnter={() => setHoverIndex(i)}
-						onMouseLeave={() => setHoverIndex(null)}
-						onMouseMove={(e) => handleMouseMove(e, i)}
+						className='relative overflow-hidden rounded-md bg-gradient-to-br from-pink-500/20 to-purple-600/20 flex items-center justify-center'
+						style={{ height: `${150 + (i % 3) * 80}px` }}
 					>
-						<Image
-							src={`/featured/featured${i + 1}.jpg`}
-							className='cursor-pointer hover:scale-150 transition-transform duration-500 ease-in-out'
-							alt='Featured Horse'
-							style={{
-								transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-							}}
-							width={500}
-							height={500}
-						/>
+						<div className='text-4xl opacity-30'>🔒</div>
 					</div>
 				))}
 			</div>

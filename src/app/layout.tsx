@@ -10,9 +10,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "OnlyHorse - E-commerce Store",
-	description:
-		"OnlyHorse is a platform for horse lovers which includes a wide range of exclusive content and merchandise.",
+	title: "OnlyHub - Content Platform",
+	description: "OnlyHub is a platform for exclusive content creators and their subscribers.",
 };
 
 export default function RootLayout({

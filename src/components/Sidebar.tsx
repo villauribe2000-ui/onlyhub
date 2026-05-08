@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Shirt, Home, LayoutDashboard, User } from "lucide-react";
+import { Shirt, Home, LayoutDashboard, User, Bell, Search } from "lucide-react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,12 +13,24 @@ import { ModeToggle } from "./ModeToggle";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import LogoutButton from "./LogoutButton";
 import { getUserProfileAction } from "@/app/update-profile/actions";
+import NotificationBadge from "@/components/NotificationBadge";
 
 const SIDEBAR_LINKS = [
 	{
 		icon: Home,
 		label: "Home",
 		href: "/",
+	},
+	{
+		icon: Search,
+		label: "Buscar",
+		href: "/search",
+	},
+	{
+		icon: Bell,
+		label: "Notifications",
+		href: "/notifications",
+		showBadge: true,
 	},
 	{
 		icon: Shirt,
@@ -37,43 +49,44 @@ const Sidebar = async () => {
 
 	return (
 		<div
-			className='flex lg:w-1/5 flex-col gap-3 px-2 border-r sticky
-    left-0 top-0 h-screen'
+			className='flex flex-col gap-3 px-3 py-4 border-r sticky
+    left-0 top-0 h-screen w-full'
 		>
-			<Link href='/update-profile' className='max-w-fit'>
-				<Avatar className='mt-4 cursor-pointer'>
+			<Link href='/update-profile' className='max-w-fit mb-2'>
+				<Avatar className='cursor-pointer w-10 h-10'>
 					<AvatarImage src={userProfile?.image || "/user-placeholder.png"} className='object-cover' />
 					<AvatarFallback>CN</AvatarFallback>
 				</Avatar>
 			</Link>
 
-			<nav className='flex flex-col gap-3'>
+			<nav className='flex flex-col gap-1'>
 				{SIDEBAR_LINKS.map((link) => (
 					<Link
 						key={link.href}
 						href={link.href}
-						className='flex w-12 lg:w-full items-center gap-2 hover:bg-primary-foreground font-bold hover:text-primary px-2 py-1 rounded-full justify-center lg:justify-normal'
+						className='flex items-center gap-3 hover:bg-muted font-semibold hover:text-primary px-3 py-2.5 rounded-lg justify-start transition-colors relative'
 					>
-						<link.icon className='w-6 h-6' />
-						<span className='hidden lg:block'>{link.label}</span>
+						<link.icon className='w-5 h-5' />
+						<span className='text-sm'>{link.label}</span>
+						{link.showBadge && <NotificationBadge />}
 					</Link>
 				))}
 
 				{isAdmin && (
 					<Link
 						href={"/secret-dashboard"}
-						className='flex w-12 lg:w-full items-center gap-2 hover:bg-primary-foreground font-bold hover:text-primary px-2 py-1 rounded-full justify-center lg:justify-normal'
+						className='flex items-center gap-3 hover:bg-muted font-semibold hover:text-primary px-3 py-2.5 rounded-lg justify-start transition-colors'
 					>
-						<LayoutDashboard className='w-6 h-6' />
-						<span className='hidden lg:block'>Dashboard</span>
+						<LayoutDashboard className='w-5 h-5' />
+						<span className='text-sm'>Dashboard</span>
 					</Link>
 				)}
 
 				<DropdownMenu>
-					<div className='flex w-12 lg:w-full items-center gap-2 hover:bg-primary-foreground font-bold hover:text-primary px-2 py-1 rounded-full justify-center lg:justify-normal'>
-						<DropdownMenuTrigger className='flex items-center gap-2'>
-							<User className='w-6 h-6' />
-							<span className='hidden lg:block'>Setting</span>
+					<div className='flex items-center gap-3 hover:bg-muted font-semibold hover:text-primary px-3 py-2.5 rounded-lg justify-start transition-colors'>
+						<DropdownMenuTrigger className='flex items-center gap-3 w-full'>
+							<User className='w-5 h-5' />
+							<span className='text-sm'>Settings</span>
 						</DropdownMenuTrigger>
 					</div>
 
@@ -87,7 +100,9 @@ const Sidebar = async () => {
 					</DropdownMenuContent>
 				</DropdownMenu>
 
-				<ModeToggle />
+				<div className='mt-2'>
+					<ModeToggle />
+				</div>
 			</nav>
 		</div>
 	);

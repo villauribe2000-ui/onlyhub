@@ -8,60 +8,133 @@ datasource db {
 }
 
 model User {
-  id           String  @id @default(cuid())
-  email        String  @unique
-  name         String
-  image        String?
-  isSubscribed Boolean @default(false)
-  customerId   String? @unique // stripe customer id
+  id                    String               @id @default(cuid())
+  email                 String               @unique
+  name                  String
+  image                 String?
+  isSubscribed          Boolean              @default(false)
+  isVerified            Boolean              @default(false)
+  customerId            String?              @unique
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  coverImage            String?
+  bio                   String?
+  username              String?              @unique
+  balance               Int                  @default(0)
+  isCreator             Boolean              @default(false)
+  subscriptionPrice     Int?
+  freeTrialDays         Int?
+  subscriptionPrice12mo Int?
+  subscriptionPrice3mo  Int?
+  freeTrialUsedAt       DateTime?
+  followersOverride     Int?
+  paypalLink            String?
+  creatorRequest        CreatorRequest?
+  donationsReceived     Donation[]           @relation("DonationCreator")
+  donationsSent         Donation[]           @relation("DonationUser")
+  earningsAdjustments   EarningsAdjustment[]
+  following             Follow[]             @relation("FollowingUser")
+  followers             Follow[]             @relation("FollowedUser")
+  followerAdjustments   FollowerAdjustment[]
+  followerMilestones    FollowerMilestone[]
+  likes                 Like[]
+  notifications         Notification[]
+  orders                Order[]
+  plaqueClaims          PlaqueClaim[]
+  posts                 Post[]
+  subscription          Subscription?
+  walletReloads         WalletReload[]
+  socialLinks           SocialLink[]
+}
 
-  subscription Subscription?
-  orders       Order[]
-  comments     Comment[]
-  likes        Like[]
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("FollowingUser", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("FollowedUser", fields: [followingId], references: [id], onDelete: Cascade)
 
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model FollowerMilestone {
+  id        String   @id @default(cuid())
+  userId    String
+  milestone Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, milestone])
+  @@index([userId])
+}
+
+model PlaqueClaim {
+  id           String   @id @default(cuid())
+  userId       String
+  milestone    Int
+  nameOnPlaque String?
+  address      String?
+  city         String?
+  state        String?
+  postalCode   String?
+  country      String?
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, milestone])
+  @@index([userId])
 }
 
 model Post {
-  id        String  @id @default(cuid())
-  mediaUrl  String?
-  mediaType String?
-  text      String
-  userId    String
-  likes     Int     @default(0)
-  isPublic  Boolean @default(false)
-
-  comments  Comment[]
-  likesList Like[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String               @id @default(cuid())
+  mediaUrl        String?
+  mediaType       String?
+  text            String
+  userId          String
+  likes           Int                  @default(0)
+  isPublic        Boolean              @default(false)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  views           Int                  @default(0)
+  likesList       Like[]
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  viewAdjustments PostViewAdjustment[]
 }
 
-model Comment {
-  id     String @id @default(cuid())
-  text   String
-  userId String
-  postId String
-
-  post Post @relation(fields: [postId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
+model PostViewAdjustment {
+  id        String   @id @default(cuid())
+  postId    String
+  delta     Int
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([postId])
-  @@index([userId])
+  @@index([createdAt])
 }
 
 model Like {
   id     String @id @default(cuid())
   userId String
   postId String
-
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@index([postId])
   @@index([userId])
@@ -74,8 +147,7 @@ model Subscription {
   price     Int      @default(0)
   startDate DateTime @default(now())
   endDate   DateTime
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -86,23 +158,21 @@ model Product {
   image      String
   price      Int
   isArchived Boolean @default(false)
-
-  orders Order[]
+  orders     Order[]
 }
 
 model Order {
-  id                String   @id @default(cuid())
+  id                String           @id @default(cuid())
   userId            String
   productId         String
   price             Int
-  isPaid            Boolean  @default(false)
+  isPaid            Boolean          @default(false)
   size              String
-  orderDate         DateTime @default(now())
+  orderDate         DateTime         @default(now())
   shippingAddressId String?
-
-  user            User             @relation(fields: [userId], references: [id])
-  product         Product          @relation(fields: [productId], references: [id])
-  shippingAddress ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  product           Product          @relation(fields: [productId], references: [id])
+  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  user              User             @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([productId])
@@ -115,6 +185,83 @@ model ShippingAddress {
   state      String?
   postalCode String
   country    String
+  order      Order[]
+}
 
-  order Order[]
+model CreatorRequest {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  message   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Donation {
+  id        String   @id @default(cuid())
+  amount    Int
+  userId    String
+  creatorId String
+  createdAt DateTime @default(now())
+  creator   User     @relation("DonationCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  user      User     @relation("DonationUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([creatorId])
+}
+
+model FollowerAdjustment {
+  id        String   @id @default(cuid())
+  userId    String
+  delta     Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model EarningsAdjustment {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model WalletReload {
+  id              String    @id @default(cuid())
+  userId          String
+  amount          Int
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now())
+  reviewedAt      DateTime?
+  paypalPaymentId String?
+  receiptUrl      String?
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([paypalPaymentId])
+  @@index([receiptUrl])
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  url       String
+  icon      String?
+  clicks    Int      @default(0)
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([order])
 }

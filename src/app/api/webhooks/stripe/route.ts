@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 
 							if (process.env.NODE_ENV !== "production") {
 								await resend.emails.send({
-									from: "OnlyHorse <onboarding@resend.dev>",
+									from: "OnlyHub <onboarding@resend.dev>",
 									to: [customerDetails.email],
 									subject: "Subscription Confirmation",
 									react: WelcomeEmail({
@@ -143,7 +143,7 @@ export async function POST(req: Request) {
 
 							if (process.env.NODE_ENV !== "production") {
 								await resend.emails.send({
-									from: "OnlyHorse <onboarding@resend.dev>",
+									from: "OnlyHub <onboarding@resend.dev>",
 									to: [customerDetails.email],
 									subject: "Order Confirmation",
 									react: ReceiptEmail({

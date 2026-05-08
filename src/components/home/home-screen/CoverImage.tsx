@@ -1,77 +1,63 @@
-import prisma from "@/db/prisma";
-import { Heart, Image as ImageIcon, Video } from "lucide-react";
+"use client";
+import { useState } from "react";
 import Image from "next/image";
+import { Camera } from "lucide-react";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { updateCoverImageAction } from "@/app/update-profile/actions";
+import { useQueryClient } from "@tanstack/react-query";
 
-const CoverImage = async ({ adminName }: { adminName: string }) => {
-	const imageCount = await prisma.post.count({
-		where: {
-			mediaType: "image",
-		},
-	});
+interface CoverImageProps {
+	adminName: string;
+	coverImage?: string | null;
+	isAdmin?: boolean;
+}
 
-	const videoCount = await prisma.post.count({
-		where: {
-			mediaType: "video",
-		},
-	});
+const CoverImage = ({ adminName, coverImage, isAdmin }: CoverImageProps) => {
+	const [cover, setCover] = useState(coverImage || null);
+	const queryClient = useQueryClient();
 
-	// const totalLikes = await prisma.like.count();
-
-	const totalLikes = await prisma.post.aggregate({
-		_sum: {
-			likes: true,
-		},
-	});
-
-	function formatNumber(num: number) {
-		if (num >= 1000000) {
-			return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
-		}
-		if (num >= 1000) {
-			return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
-		}
-		return num.toString();
-	}
+	const handleUpload = async (url: string) => {
+		setCover(url);
+		await updateCoverImageAction(url);
+		queryClient.invalidateQueries({ queryKey: ["posts"] });
+	};
 
 	return (
-		<div className='h-44 overflow-hidden relative'>
-			<Image
-				src={"/featured/featured10.jpg"}
-				className='h-full w-full object-cover select-none pointer-events-none'
-				fill
-				alt='Horse Cover Image'
-			/>
-			<div
-				className='absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-800 to-transparent'
-				aria-hidden='true'
-			/>
+		<div className='h-48 overflow-hidden relative bg-gradient-to-br from-pink-500/30 to-purple-600/30'>
+			{cover ? (
+				<Image
+					src={cover}
+					className='h-full w-full object-cover select-none pointer-events-none'
+					fill
+					alt='Cover Image'
+				/>
+			) : (
+				<div className='w-full h-full bg-gradient-to-br from-pink-500/40 via-rose-400/30 to-purple-600/40' />
+			)}
 
-			<div className='flex justify-between items-center absolute top-0 left-0 px-2 py-1 z-20 w-full'>
-				<div className='flex items-center gap-2'>
-					<div className='flex flex-col text-white'>
-						<p className='font-bold'>{adminName}</p>
+			{/* Dark overlay */}
+			<div className='absolute inset-0 bg-black/10' aria-hidden='true' />
 
-						<div className='flex gap-2 items-center'>
-							<div className='flex items-center gap-1'>
-								<ImageIcon className='w-4 h-4' />
-								<span className='text-sm font-bold'>{imageCount}</span>
-							</div>
-
-							<span className='text-xs'>•</span>
-							<div className='flex items-center gap-1'>
-								<Video className='w-4 h-4' />
-								<span className='text-sm font-bold'>{videoCount}</span>
-							</div>
-
-							<span className='text-xs'>•</span>
-							<div className='flex items-center gap-1'>
-								<Heart className='w-4 h-4' />
-								<span className='text-sm font-bold'>{formatNumber(totalLikes._sum.likes || 0)}</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			{/* Edit button for admin */}
+			{isAdmin && (
+				<CldUploadWidget
+					signatureEndpoint='/api/sign-image'
+					onSuccess={(result, { widget }) => {
+						handleUpload((result.info as CloudinaryUploadWidgetInfo).secure_url);
+						widget.close();
+					}}
+				>
+					{({ open }) => (
+						<button
+							onClick={() => open()}
+							className='absolute bottom-3 right-3 flex items-center gap-2 bg-black/60 hover:bg-black/80 text-white text-xs font-semibold px-3 py-2 rounded-full transition-colors z-10'
+						>
+							<Camera className='w-4 h-4' />
+							Edit cover
+						</button>
+					)}
+				</CldUploadWidget>
+			)}
 		</div>
 	);
 };

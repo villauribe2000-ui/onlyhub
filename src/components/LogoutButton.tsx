@@ -1,12 +1,11 @@
 "use client";
 
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
 
 const LogoutButton = () => {
 	return (
-		<LogoutLink>
-			<DropdownMenuItem>Logout</DropdownMenuItem>
+		<LogoutLink className='w-full text-left'>
+			Cerrar sesión
 		</LogoutLink>
 	);
 };

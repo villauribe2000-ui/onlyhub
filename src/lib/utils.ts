@@ -8,3 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 export const centsToDollars = (cents: number) => {
 	return (cents / 100).toFixed(2); // $19.99
 };
+
+export const compactNumber = (value: number) =>
+	new Intl.NumberFormat("en-US", {
+		notation: "compact",
+		maximumFractionDigits: 1,
+	}).format(value);

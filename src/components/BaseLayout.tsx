@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import SuggestedProducts from "./SuggestedProducts";
+import BottomNav from "./BottomNav";
+import { getUserProfileAction } from "@/app/update-profile/actions";
 
 const BaseLayout = async ({
 	children,
@@ -11,18 +13,41 @@ const BaseLayout = async ({
 	children: ReactNode;
 	renderRightPanel?: boolean;
 }) => {
-	// any page that uses this layout requires authentication
-	const { isAuthenticated } = getKindeServerSession();
+	const { isAuthenticated, getUser } = getKindeServerSession();
 	if (!(await isAuthenticated())) {
 		return redirect("/");
 	}
 
-	return (
-		<div className='flex max-w-2xl lg:max-w-7xl mx-auto relative'>
-			<Sidebar />
+	const kindeUser = await getUser();
+	const userProfile = await getUserProfileAction();
+	const isAdmin = kindeUser?.email === process.env.ADMIN_EMAIL;
+	const billingUrl = (process.env.STRIPE_BILLING_PORTAL_LINK_DEV || "") + "?prefilled_email=" + kindeUser?.email;
 
-			<div className='w-full lg:w-3/5 flex flex-col border-r'>{children}</div>
-			{renderRightPanel && <SuggestedProducts />}
+	return (
+		<div className='flex max-w-[1400px] mx-auto relative w-full'>
+			{/* Sidebar — hidden on mobile */}
+			<div className='hidden lg:flex lg:w-[240px] xl:w-[280px]'>
+				<Sidebar />
+			</div>
+
+			<div className='flex-1 flex flex-col border-r min-w-0 pb-16 md:pb-0 max-w-[600px] mx-auto lg:mx-0 lg:max-w-none'>{children}</div>
+			{renderRightPanel && (
+				<div className='hidden lg:block lg:w-[320px] xl:w-[360px]'>
+					<SuggestedProducts />
+				</div>
+			)}
+
+			{/* Bottom nav — only on mobile */}
+			<BottomNav
+				image={userProfile?.image}
+				name={userProfile?.name}
+				username={(userProfile as any)?.username}
+				isAdmin={isAdmin}
+				billingUrl={billingUrl}
+				isCreator={(userProfile as any)?.isCreator}
+				isVerified={(userProfile as any)?.isVerified}
+				balance={(userProfile as any)?.balance}
+			/>
 		</div>
 	);
 };
