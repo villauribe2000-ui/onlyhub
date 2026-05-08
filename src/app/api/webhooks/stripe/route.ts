@@ -8,7 +8,7 @@ import { Resend } from "resend";
 import WelcomeEmail from "@/emails/WelcomeEmail";
 import ReceiptEmail from "@/emails/ReceiptEmail";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const webhookSecret =
 	process.env.NODE_ENV === "development"
@@ -98,7 +98,7 @@ export async function POST(req: Request) {
 								data: { isSubscribed: true },
 							});
 
-							if (process.env.NODE_ENV !== "production") {
+							if (process.env.NODE_ENV !== "production" && resend) {
 								await resend.emails.send({
 									from: "OnlyHub <onboarding@resend.dev>",
 									to: [customerDetails.email],
@@ -141,7 +141,7 @@ export async function POST(req: Request) {
 							});
 							// send a success email to the user
 
-							if (process.env.NODE_ENV !== "production") {
+							if (process.env.NODE_ENV !== "production" && resend) {
 								await resend.emails.send({
 									from: "OnlyHub <onboarding@resend.dev>",
 									to: [customerDetails.email],
