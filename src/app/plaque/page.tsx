@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import BackButton from "@/components/BackButton";
 
+export const dynamic = 'force-dynamic';
+
 const PlaquePage = async () => {
 	const claims = await getMyPlaqueClaimsAction();
 

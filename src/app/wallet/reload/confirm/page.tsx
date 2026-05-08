@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const WalletReloadConfirmPage = () => {
+function WalletReloadConfirmContent() {
 	const { toast } = useToast();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -91,6 +91,14 @@ const WalletReloadConfirmPage = () => {
 				</Card>
 			</div>
 		</div>
+	);
+}
+
+const WalletReloadConfirmPage = () => {
+	return (
+		<Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando...</div>}>
+			<WalletReloadConfirmContent />
+		</Suspense>
 	);
 };
 
