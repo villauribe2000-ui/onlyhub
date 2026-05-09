@@ -38,8 +38,12 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			// Only update name, username, bio, and subscription prices
-			// Images are saved immediately when uploaded
+			// Update name, username, and bio
+			await updateUserProfileAction({ 
+				name: name,
+				image: mediaUrlRef.current || userProfile?.image,
+				coverImage: coverImageUrlRef.current || (userProfile as any)?.coverImage
+			});
 			
 			// Update username and bio
 			await updateProfileInfoAction({ username, bio });
@@ -65,20 +69,25 @@ const UpdateProfileForm = () => {
 	});
 
 	useEffect(() => {
-		if (userProfile && !name) { // Only run once when data first loads
-			setName(userProfile.name);
-			setUsername((userProfile as any).username || "");
-			setBio((userProfile as any).bio || "");
-			setMediaUrl(userProfile.image || "");
-			setCoverImageUrl((userProfile as any).coverImage || "");
-			mediaUrlRef.current = userProfile.image || "";
-			coverImageUrlRef.current = (userProfile as any).coverImage || "";
-			if ((userProfile as any).subscriptionPrice) setSubPrice(((userProfile as any).subscriptionPrice / 100).toString());
-			if ((userProfile as any).subscriptionPrice3mo) setSubPrice3mo(((userProfile as any).subscriptionPrice3mo / 100).toString());
-			if ((userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
-			if ((userProfile as any).freeTrialDays) setFreeTrialDays((userProfile as any).freeTrialDays.toString());
+		if (userProfile) {
+			// Only set initial values if they haven't been set yet
+			if (!name && userProfile.name) setName(userProfile.name);
+			if (!username && (userProfile as any).username) setUsername((userProfile as any).username || "");
+			if (!bio && (userProfile as any).bio) setBio((userProfile as any).bio || "");
+			if (!mediaUrl && userProfile.image) {
+				setMediaUrl(userProfile.image);
+				mediaUrlRef.current = userProfile.image;
+			}
+			if (!coverImageUrl && (userProfile as any).coverImage) {
+				setCoverImageUrl((userProfile as any).coverImage);
+				coverImageUrlRef.current = (userProfile as any).coverImage;
+			}
+			if (!subPrice && (userProfile as any).subscriptionPrice) setSubPrice(((userProfile as any).subscriptionPrice / 100).toString());
+			if (!subPrice3mo && (userProfile as any).subscriptionPrice3mo) setSubPrice3mo(((userProfile as any).subscriptionPrice3mo / 100).toString());
+			if (!subPrice12mo && (userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
+			if (!freeTrialDays && (userProfile as any).freeTrialDays) setFreeTrialDays((userProfile as any).freeTrialDays.toString());
 		}
-	}, [userProfile, name]); // Run when userProfile loads and name is empty
+	}, [userProfile]); // Only depend on userProfile
 
 	return (
 		<div className='px-2 md:px-10 my-10 max-w-lg mx-auto'>
