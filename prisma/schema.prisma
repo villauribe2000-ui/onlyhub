@@ -30,6 +30,10 @@ model User {
   followersOverride     Int?
   paypalLink            String?
   lastActive            DateTime             @default(now())
+  isSuspended           Boolean              @default(false)
+  suspensionReason      String?
+  suspendedAt           DateTime?
+  suspendedBy           String?
   creatorRequest        CreatorRequest?
   donationsReceived     Donation[]           @relation("DonationCreator")
   donationsSent         Donation[]           @relation("DonationUser")

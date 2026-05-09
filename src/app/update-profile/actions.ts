@@ -4,6 +4,7 @@ import prisma from "@/db/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { checkUserSuspension } from "@/lib/checkSuspension";
 
 export async function getUserProfileAction() {
 	const { getUser } = getKindeServerSession();
@@ -16,10 +17,8 @@ export async function getUserProfileAction() {
 }
 
 export async function updateUserProfileAction({ name, image, coverImage }: { name: string; image?: string; coverImage?: string }) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-
-	if (!user) throw new Error("Unauthorized");
+	// Check if user is suspended
+	const user = await checkUserSuspension();
 
 	console.log('=== SERVER ACTION DEBUG ===');
 	console.log('Received name:', name);
@@ -56,10 +55,8 @@ export async function updateUserProfileAction({ name, image, coverImage }: { nam
 }
 
 export async function updateCoverImageAction(coverImage: string) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-
-	if (!user) throw new Error("Unauthorized");
+	// Check if user is suspended
+	const user = await checkUserSuspension();
 
 	await prisma.user.update({
 		where: { id: user.id },
@@ -71,9 +68,8 @@ export async function updateCoverImageAction(coverImage: string) {
 }
 
 export async function updateProfileInfoAction({ username, bio }: { username?: string; bio?: string }) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-	if (!user) throw new Error("Unauthorized");
+	// Check if user is suspended
+	const user = await checkUserSuspension();
 
 	// Validate username is unique if provided
 	if (username) {
@@ -107,9 +103,8 @@ export async function updateSubscriptionPriceAction(
 	price12moInCents?: number,
 	freeTrialDays?: number
 ) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-	if (!user) throw new Error("Unauthorized");
+	// Check if user is suspended
+	const user = await checkUserSuspension();
 
 	await prisma.user.update({
 		where: { id: user.id },

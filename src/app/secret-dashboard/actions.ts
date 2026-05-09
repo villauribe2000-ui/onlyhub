@@ -201,6 +201,10 @@ export async function getAllUsersAction() {
 			isSubscribed: true,
 			isVerified: true,
 			followersOverride: true,
+			isSuspended: true,
+			suspensionReason: true,
+			suspendedAt: true,
+			suspendedBy: true,
 			_count: {
 				select: {
 					followers: true,
@@ -469,6 +473,43 @@ export async function getAllPostsForAdminAction() {
 		take: 100,
 	});
 	return posts.map((p) => ({ ...p, views: 0 }));
+}
+
+export async function suspendUserAction(userId: string, reason: string) {
+	const isAdmin = await checkIfAdmin();
+	if (!isAdmin) throw new Error("Unauthorized");
+
+	const { getUser } = getKindeServerSession();
+	const adminUser = await getUser();
+
+	await prisma.user.update({
+		where: { id: userId },
+		data: {
+			isSuspended: true,
+			suspensionReason: reason,
+			suspendedAt: new Date(),
+			suspendedBy: adminUser?.id || "admin",
+		},
+	});
+
+	return { success: true };
+}
+
+export async function unsuspendUserAction(userId: string) {
+	const isAdmin = await checkIfAdmin();
+	if (!isAdmin) throw new Error("Unauthorized");
+
+	await prisma.user.update({
+		where: { id: userId },
+		data: {
+			isSuspended: false,
+			suspensionReason: null,
+			suspendedAt: null,
+			suspendedBy: null,
+		},
+	});
+
+	return { success: true };
 }
 
 export async function setPostLikesAction(postId: string, likes: number) {

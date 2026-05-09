@@ -2,6 +2,7 @@
 
 import prisma from "@/db/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { checkUserSuspension } from "@/lib/checkSuspension";
 
 type PostArgs = {
 	text: string;
@@ -11,12 +12,8 @@ type PostArgs = {
 };
 
 export async function createUserPostAction({ isPublic, mediaUrl, mediaType, text }: PostArgs) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-
-	if (!user) {
-		throw new Error("Unauthorized");
-	}
+	// Check if user is suspended
+	const user = await checkUserSuspension();
 
 	const userProfile = await prisma.user.findUnique({ where: { id: user.id } });
 	

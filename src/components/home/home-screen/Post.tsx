@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ActivityStatus from "@/components/ActivityStatus";
+import SuspendedAccount from "@/components/SuspendedAccount";
 
 type PostWithLikes = Prisma.PostGetPayload<{
         include: {
@@ -192,6 +193,22 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
 
         // Use username if available, otherwise use email (without domain)
         const displayUsername = author.username || author.email?.split('@')[0] || 'usuario';
+
+        // Check if user is suspended
+        if ((author as any).isSuspended) {
+                return (
+                        <SuspendedAccount 
+                                user={{
+                                        id: author.id,
+                                        name: author.name,
+                                        image: author.image,
+                                        suspensionReason: (author as any).suspensionReason,
+                                        suspendedAt: (author as any).suspendedAt,
+                                }}
+                                showDetails={false}
+                        />
+                );
+        }
 
         return (
                 <div className='flex flex-col gap-2 p-4 border-b bg-background hover:bg-muted/30 transition-colors'>

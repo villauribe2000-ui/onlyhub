@@ -3,6 +3,7 @@
 import prisma from "@/db/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { updateUserActivity } from "@/lib/updateActivity";
+import { checkUserSuspension } from "@/lib/checkSuspension";
 
 export async function getPostsAction() {
 	const { getUser } = getKindeServerSession();
@@ -24,6 +25,9 @@ export async function getPostsAction() {
 					username: true,
 					isVerified: true,
 					lastActive: true,
+					isSuspended: true,
+					suspensionReason: true,
+					suspendedAt: true,
 				}
 			},
 			likesList: { where: { userId: user.id } },
@@ -56,6 +60,9 @@ export async function getPostsByUserIdAction(userId: string) {
 					username: true,
 					isVerified: true,
 					lastActive: true,
+					isSuspended: true,
+					suspensionReason: true,
+					suspendedAt: true,
 				}
 			},
 			likesList: { where: { userId: user.id } },
@@ -82,12 +89,7 @@ export async function deletePostAction(postId: string) {
 }
 
 export async function likePostAction(postId: string) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-
-	if (!user) {
-		throw new Error("Unauthorized");
-	}
+	const user = await checkUserSuspension();
 
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -121,10 +123,7 @@ export async function likePostAction(postId: string) {
 }
 
 export async function createDonationAction(creatorId: string, amountInCents: number) {
-	const { getUser } = getKindeServerSession();
-	const user = await getUser();
-
-	if (!user) throw new Error("Unauthorized");
+	const user = await checkUserSuspension();
 
 	// Get user's balance
 	const donor = await prisma.user.findUnique({

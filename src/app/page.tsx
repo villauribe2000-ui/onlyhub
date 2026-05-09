@@ -2,6 +2,7 @@ import AuthScreen from "@/components/home/auth-screen/AuthScreen";
 import HomeScreen from "@/components/home/home-screen/HomeScreen";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/db/prisma";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
 	const { getUser } = getKindeServerSession();
@@ -11,7 +12,11 @@ export default async function Home() {
 	if (user?.id && user?.email) {
 		try {
 			const existingUser = await prisma.user.findUnique({ 
-				where: { id: user.id } 
+				where: { id: user.id },
+				select: {
+					id: true,
+					isSuspended: true,
+				}
 			});
 			
 			if (!existingUser) {
@@ -31,6 +36,9 @@ export default async function Home() {
 				});
 				
 				console.log('New user created:', user.id);
+			} else if (existingUser.isSuspended) {
+				// Redirect suspended users to suspension page
+				redirect("/suspended");
 			}
 		} catch (error) {
 			console.error('Error creating user:', error);
