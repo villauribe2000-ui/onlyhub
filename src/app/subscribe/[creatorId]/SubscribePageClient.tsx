@@ -11,13 +11,39 @@ interface SubscribePageClientProps {
 	creatorId: string;
 	creatorName: string;
 	subscriptionPrice: number;
+	subscriptionPrice3mo?: number | null;
+	subscriptionPrice12mo?: number | null;
+	freeTrialDays?: number;
 }
 
-const SubscribePageClient = ({ creatorId, creatorName, subscriptionPrice }: SubscribePageClientProps) => {
+const SubscribePageClient = ({ creatorId, creatorName, subscriptionPrice, subscriptionPrice3mo, subscriptionPrice12mo, freeTrialDays }: SubscribePageClientProps) => {
 	const { toast } = useToast();
 	const { user } = useKindeBrowserClient();
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [paymentMethod, setPaymentMethod] = useState<"wallet" | "paypal">("wallet");
+	const [selectedPlan, setSelectedPlan] = useState<"1mo" | "3mo" | "12mo">("1mo");
+
+	const getCurrentPrice = () => {
+		switch (selectedPlan) {
+			case "3mo":
+				return subscriptionPrice3mo || subscriptionPrice * 3;
+			case "12mo":
+				return subscriptionPrice12mo || subscriptionPrice * 12;
+			default:
+				return subscriptionPrice;
+		}
+	};
+
+	const getPlanLabel = () => {
+		switch (selectedPlan) {
+			case "3mo":
+				return "3 meses";
+			case "12mo":
+				return "12 meses";
+			default:
+				return "1 mes";
+		}
+	};
 
 	const handleSubscribe = async () => {
 		if (!user) {
@@ -36,10 +62,10 @@ const SubscribePageClient = ({ creatorId, creatorName, subscriptionPrice }: Subs
 				const data = await response.json();
 				if (response.ok) {
 					const userBalance = data.balance || 0;
-					if (userBalance < subscriptionPrice) {
+					if (userBalance < getCurrentPrice()) {
 						toast({
 							title: "Saldo insuficiente",
-							description: `Tu saldo es de $${(userBalance / 100).toFixed(2)} USD. Necesitas $${(subscriptionPrice / 100).toFixed(2)} USD para suscribirte.`,
+							description: `Tu saldo es de $${(userBalance / 100).toFixed(2)} USD. Necesitas $${(getCurrentPrice() / 100).toFixed(2)} USD para suscribirte.`,
 							variant: "destructive",
 						});
 						window.location.href = "/wallet/reload";
@@ -93,12 +119,12 @@ const SubscribePageClient = ({ creatorId, creatorName, subscriptionPrice }: Subs
 					window.location.href = data.paypalLink;
 				} else {
 					// Fallback to default PayPal link
-					const defaultPaypalUrl = `https://www.paypal.com/ncp/payment/RFGJW4SCEF8PJ?amount=${subscriptionPrice / 100}&creatorId=${creatorId}`;
+					const defaultPaypalUrl = `https://www.paypal.com/ncp/payment/RFGJW4SCEF8PJ?amount=${getCurrentPrice() / 100}&creatorId=${creatorId}`;
 					window.location.href = defaultPaypalUrl;
 				}
 			} catch (error) {
 				// Fallback to default PayPal link
-				const defaultPaypalUrl = `https://www.paypal.com/ncp/payment/RFGJW4SCEF8PJ?amount=${subscriptionPrice / 100}&creatorId=${creatorId}`;
+				const defaultPaypalUrl = `https://www.paypal.com/ncp/payment/RFGJW4SCEF8PJ?amount=${getCurrentPrice() / 100}&creatorId=${creatorId}`;
 				window.location.href = defaultPaypalUrl;
 			}
 		}
@@ -177,14 +203,88 @@ const SubscribePageClient = ({ creatorId, creatorName, subscriptionPrice }: Subs
 									Plan de Suscripción
 								</CardTitle>
 								<CardDescription>
-									Pago mensual - Cancela cuando quieras
+									{selectedPlan === "1mo" && "Pago mensual - Cancela cuando quieras"}
+									{selectedPlan === "3mo" && "Pago por 3 meses - Ahorra dinero"}
+									{selectedPlan === "12mo" && "Pago anual - Mejor precio"}
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="p-8">
+								{/* Plan selector */}
+								{(subscriptionPrice3mo || subscriptionPrice12mo) && (
+									<div className="space-y-3 mb-6">
+										<p className="text-sm font-semibold">Selecciona tu plan:</p>
+										<div className="grid gap-3">
+											<button
+												onClick={() => setSelectedPlan("1mo")}
+												className={`p-4 rounded-xl border text-left transition-all ${
+													selectedPlan === "1mo"
+														? "bg-[#00AFF0] text-white border-[#00AFF0]"
+														: "border-border hover:bg-muted"
+												}`}
+											>
+												<div className="flex justify-between items-center">
+													<div>
+														<p className="font-semibold">Plan Mensual</p>
+														<p className="text-sm opacity-75">Pago mensual</p>
+													</div>
+													<div className="text-right">
+														<p className="text-2xl font-bold">${(subscriptionPrice / 100).toFixed(2)}</p>
+														<p className="text-sm opacity-75">/mes</p>
+													</div>
+												</div>
+											</button>
+											
+											{subscriptionPrice3mo && (
+												<button
+													onClick={() => setSelectedPlan("3mo")}
+													className={`p-4 rounded-xl border text-left transition-all ${
+														selectedPlan === "3mo"
+															? "bg-[#00AFF0] text-white border-[#00AFF0]"
+															: "border-border hover:bg-muted"
+													}`}
+												>
+													<div className="flex justify-between items-center">
+														<div>
+															<p className="font-semibold">Plan 3 Meses</p>
+															<p className="text-sm opacity-75">Ahorra dinero</p>
+														</div>
+														<div className="text-right">
+															<p className="text-2xl font-bold">${(subscriptionPrice3mo / 100).toFixed(2)}</p>
+															<p className="text-sm opacity-75">total</p>
+														</div>
+													</div>
+												</button>
+											)}
+											
+											{subscriptionPrice12mo && (
+												<button
+													onClick={() => setSelectedPlan("12mo")}
+													className={`p-4 rounded-xl border text-left transition-all ${
+														selectedPlan === "12mo"
+															? "bg-[#00AFF0] text-white border-[#00AFF0]"
+															: "border-border hover:bg-muted"
+													}`}
+												>
+													<div className="flex justify-between items-center">
+														<div>
+															<p className="font-semibold">Plan Anual</p>
+															<p className="text-sm opacity-75">Mejor precio</p>
+														</div>
+														<div className="text-right">
+															<p className="text-2xl font-bold">${(subscriptionPrice12mo / 100).toFixed(2)}</p>
+															<p className="text-sm opacity-75">total</p>
+														</div>
+													</div>
+												</button>
+											)}
+										</div>
+									</div>
+								)}
+
 								<div className="text-center mb-8">
 									<div className="text-6xl font-black mb-2">
-										${(subscriptionPrice / 100).toFixed(2)}
-										<span className="text-xl text-muted-foreground font-normal">/mes</span>
+										${(getCurrentPrice() / 100).toFixed(2)}
+										<span className="text-xl text-muted-foreground font-normal">/{getPlanLabel()}</span>
 									</div>
 									<p className="text-muted-foreground">
 										Suscríbete hoy y accede a todo el contenido

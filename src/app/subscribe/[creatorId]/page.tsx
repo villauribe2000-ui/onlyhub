@@ -19,6 +19,9 @@ const SubscribePage = async ({ params }: SubscribePageProps) => {
 
 	const userProfile = await getUserProfileAction();
 	const subscriptionPrice = (creator as any).subscriptionPrice || 0;
+	const subscriptionPrice3mo = (creator as any).subscriptionPrice3mo || null;
+	const subscriptionPrice12mo = (creator as any).subscriptionPrice12mo || null;
+	const freeTrialDays = (creator as any).freeTrialDays || 0;
 
 	return (
 		<BaseLayout>
@@ -26,6 +29,9 @@ const SubscribePage = async ({ params }: SubscribePageProps) => {
 				creatorId={params.creatorId}
 				creatorName={creator.name}
 				subscriptionPrice={subscriptionPrice}
+				subscriptionPrice3mo={subscriptionPrice3mo}
+				subscriptionPrice12mo={subscriptionPrice12mo}
+				freeTrialDays={freeTrialDays}
 			/>
 		</BaseLayout>
 	);
