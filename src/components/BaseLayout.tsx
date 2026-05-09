@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import SuggestedProducts from "./SuggestedProducts";
 import BottomNav from "./BottomNav";
+import InstallAppBanner from "./InstallAppBanner";
 import { getUserProfileAction } from "@/app/update-profile/actions";
 import prisma from "@/db/prisma";
 
@@ -38,12 +39,17 @@ const BaseLayout = async ({
 
 	return (
 		<div className='flex max-w-[1400px] mx-auto relative w-full'>
+			{/* Install App Banner */}
+			<InstallAppBanner />
+			
 			{/* Sidebar — hidden on mobile */}
 			<div className='hidden lg:flex lg:w-[240px] xl:w-[280px]'>
 				<Sidebar />
 			</div>
 
-			<div className='flex-1 flex flex-col border-r min-w-0 pb-16 md:pb-0 max-w-[600px] mx-auto lg:mx-0 lg:max-w-none'>{children}</div>
+			<div className='flex-1 flex flex-col border-r min-w-0 pb-16 md:pb-0 max-w-[600px] mx-auto lg:mx-0 lg:max-w-none pt-0'>
+				{children}
+			</div>
 			{renderRightPanel && (
 				<div className='hidden lg:block lg:w-[320px] xl:w-[360px]'>
 					<SuggestedProducts />

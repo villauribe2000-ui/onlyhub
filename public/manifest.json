@@ -1,0 +1,27 @@
+{
+  "name": "OnlyHub",
+  "short_name": "OnlyHub",
+  "description": "Plataforma de contenido para creadores",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00AFF0",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["social", "entertainment"],
+  "lang": "es",
+  "dir": "ltr"
+}

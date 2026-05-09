@@ -104,27 +104,22 @@ const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount
 				</div>
 				<div className='flex items-center gap-2 text-sm'>
 					<div className='flex items-center gap-1'>
-						<svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-							<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-							<line x1="8" y1="21" x2="16" y2="21"/>
-							<line x1="12" y1="17" x2="12" y2="21"/>
+						<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
+							<path d='M3 6h18v12H3V6zm2 2v8h14V8H5z'/>
 						</svg>
 						<span className='font-semibold'>{formatVideos(videoCount)}</span>
 					</div>
 					<span className='text-white/60'>•</span>
 					<div className='flex items-center gap-1'>
-						<svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-							<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+						<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
+							<path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/>
 						</svg>
 						<span className='font-semibold'>{formatLikes(likesCount)}</span>
 					</div>
 					<span className='text-white/60'>•</span>
 					<div className='flex items-center gap-1'>
-						<svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-							<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-							<circle cx="9" cy="7" r="4"/>
-							<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-							<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+						<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
+							<path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/>
 						</svg>
 						<span className='font-semibold'>{formatFollowers(followersCount)}</span>
 					</div>

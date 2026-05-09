@@ -12,6 +12,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "OnlyHub - Content Platform",
 	description: "OnlyHub is a platform for exclusive content creators and their subscribers.",
+	manifest: "/manifest.json",
+	themeColor: "#00AFF0",
+	viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "default",
+		title: "OnlyHub",
+	},
 };
 
 export default function RootLayout({
@@ -21,6 +29,13 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en' suppressHydrationWarning>
+			<head>
+				<meta name="apple-mobile-web-app-capable" content="yes" />
+				<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+				<meta name="apple-mobile-web-app-title" content="OnlyHub" />
+				<meta name="mobile-web-app-capable" content="yes" />
+				<link rel="apple-touch-icon" href="/logo.png" />
+			</head>
 			<body className={inter.className}>
 				<ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
 					<div className='h-screen flex flex-col'>
