@@ -15,7 +15,7 @@ export async function getUserProfileAction() {
 	return currentUser;
 }
 
-export async function updateUserProfileAction({ name, image }: { name: string; image: string }) {
+export async function updateUserProfileAction({ name, image, coverImage }: { name: string; image: string; coverImage?: string }) {
 	const { getUser } = getKindeServerSession();
 	const user = await getUser();
 
@@ -25,6 +25,7 @@ export async function updateUserProfileAction({ name, image }: { name: string; i
 
 	if (name) updatedFields.name = name;
 	if (image) updatedFields.image = image;
+	if (coverImage) updatedFields.coverImage = coverImage;
 
 	const updatedUser = await prisma.user.update({
 		where: { id: user.id },

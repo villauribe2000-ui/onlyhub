@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getUserProfileAction, updateUserProfileAction, updateProfileInfoAction, updateSubscriptionPriceAction } from "./actions";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +17,7 @@ import { useRouter } from "next/navigation";
 
 const UpdateProfileForm = () => {
 	const [mediaUrl, setMediaUrl] = useState("");
+	const [coverImageUrl, setCoverImageUrl] = useState("");
 	const [name, setName] = useState("");
 	const [username, setUsername] = useState("");
 	const [bio, setBio] = useState("");
@@ -34,7 +36,7 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			await updateUserProfileAction({ name, image: mediaUrl });
+			await updateUserProfileAction({ name, image: mediaUrl, coverImage: coverImageUrl });
 			await updateProfileInfoAction({ username, bio });
 			if ((userProfile as any)?.isCreator && subPrice) {
 				await updateSubscriptionPriceAction(
@@ -75,10 +77,51 @@ const UpdateProfileForm = () => {
 				</CardHeader>
 
 				<CardContent>
+					{/* Cover Image */}
+					<div className='relative w-full h-32 bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg mb-16 overflow-hidden'>
+						{(coverImageUrl || (userProfile as any)?.coverImage) && (
+							<Image
+								src={coverImageUrl || (userProfile as any)?.coverImage}
+								alt='Cover'
+								fill
+								className='object-cover'
+							/>
+						)}
+						<CldUploadWidget
+							signatureEndpoint='/api/sign-image'
+							options={{
+								sources: ['local', 'camera'],
+								multiple: false,
+								maxFiles: 1,
+							}}
+							onSuccess={(result, { widget }) => {
+								if (result?.info && typeof result.info !== 'string') {
+									setCoverImageUrl(result.info.secure_url);
+									toast({ title: "Foto de portada actualizada" });
+								}
+								widget.close();
+							}}
+							onError={(error) => {
+								console.error('Upload error:', error);
+								toast({ title: "Error al subir imagen", description: "Intenta de nuevo", variant: "destructive" });
+							}}
+						>
+							{({ open }) => (
+								<button
+									onClick={() => open()}
+									type='button'
+									className='absolute bottom-2 right-2 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-semibold hover:bg-black/80 transition-colors'
+								>
+									Cambiar portada
+								</button>
+							)}
+						</CldUploadWidget>
+					</div>
+
 					{/* Avatar */}
-					<div className='flex justify-center mb-4'>
+					<div className='flex justify-center -mt-12 mb-4'>
 						<div className='relative'>
-							<Avatar className='w-24 h-24'>
+							<Avatar className='w-24 h-24 border-4 border-background'>
 								<AvatarImage
 									src={mediaUrl || userProfile?.image || "/user-placeholder.png"}
 									className='object-cover'
