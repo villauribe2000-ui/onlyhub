@@ -38,17 +38,8 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			const finalMediaUrl = mediaUrlRef.current || mediaUrl;
-			const finalCoverUrl = coverImageUrlRef.current || coverImageUrl;
-			
-			alert(`Guardando:\nmediaUrl: ${finalMediaUrl}\ncoverImageUrl: ${finalCoverUrl}`);
-			
-			// Always update name and images
-			await updateUserProfileAction({ 
-				name: name || userProfile?.name || "",
-				image: finalMediaUrl,
-				coverImage: finalCoverUrl
-			});
+			// Only update name, username, bio, and subscription prices
+			// Images are saved immediately when uploaded
 			
 			// Update username and bio
 			await updateProfileInfoAction({ username, bio });
@@ -119,7 +110,17 @@ const UpdateProfileForm = () => {
 									const url = result.info.secure_url;
 									setCoverImageUrl(url);
 									coverImageUrlRef.current = url;
-									toast({ title: "Foto de portada actualizada" });
+									
+									// Save immediately to database
+									updateUserProfileAction({ 
+										name: name || userProfile?.name || "",
+										image: mediaUrlRef.current || userProfile?.image,
+										coverImage: url
+									}).then(() => {
+										toast({ title: "Foto de portada actualizada y guardada" });
+									}).catch((error) => {
+										toast({ title: "Error al guardar", description: error.message, variant: "destructive" });
+									});
 								}
 								widget.close();
 							}}
@@ -164,8 +165,17 @@ const UpdateProfileForm = () => {
 										const url = result.info.secure_url;
 										setMediaUrl(url);
 										mediaUrlRef.current = url;
-										alert(`Imagen de perfil subida! URL: ${url}`);
-										toast({ title: "Foto de perfil actualizada" });
+										
+										// Save immediately to database
+										updateUserProfileAction({ 
+											name: name || userProfile?.name || "",
+											image: url,
+											coverImage: coverImageUrlRef.current || (userProfile as any)?.coverImage
+										}).then(() => {
+											toast({ title: "Foto de perfil actualizada y guardada" });
+										}).catch((error) => {
+											toast({ title: "Error al guardar", description: error.message, variant: "destructive" });
+										});
 									}
 									widget.close();
 								}}
@@ -189,7 +199,6 @@ const UpdateProfileForm = () => {
 
 					<form onSubmit={(e) => { 
 						e.preventDefault(); 
-						alert(`Antes de updateProfile - mediaUrl: ${mediaUrl}, coverImageUrl: ${coverImageUrl}`);
 						updateProfile(); 
 					}} className='flex flex-col gap-4'>
 						<div>
