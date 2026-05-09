@@ -36,12 +36,24 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			await updateUserProfileAction({ 
-				name, 
-				image: mediaUrl || userProfile?.image || "", 
-				coverImage: coverImageUrl || (userProfile as any)?.coverImage || undefined 
-			});
+			// Only send changed values
+			const profileUpdates: { name?: string; image?: string; coverImage?: string } = {};
+			
+			if (name && name !== userProfile?.name) profileUpdates.name = name;
+			if (mediaUrl) profileUpdates.image = mediaUrl;
+			if (coverImageUrl) profileUpdates.coverImage = coverImageUrl;
+			
+			// Update profile if there are changes
+			if (Object.keys(profileUpdates).length > 0 || name) {
+				await updateUserProfileAction({ 
+					name: name || userProfile?.name || "",
+					image: mediaUrl || undefined,
+					coverImage: coverImageUrl || undefined
+				});
+			}
+			
 			await updateProfileInfoAction({ username, bio });
+			
 			if ((userProfile as any)?.isCreator && subPrice) {
 				await updateSubscriptionPriceAction(
 					Math.round(parseFloat(subPrice) * 100),
