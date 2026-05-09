@@ -192,10 +192,9 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 							</div>
 							<div className='flex items-center gap-2 text-sm text-white ml-8'>
 								<div className='flex items-center gap-1'>
-									{/* Video icon - matching CoverImage exactly */}
+									{/* Video icon - play button style */}
 									<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
-										<rect x="2" y="4" width="20" height="12" rx="2" ry="2" fill="currentColor"/>
-										<rect x="4" y="6" width="16" height="8" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+										<path d='M8 5v14l11-7z'/>
 									</svg>
 									<span className='font-semibold'>{formatVideos(videoCount)}</span>
 								</div>
