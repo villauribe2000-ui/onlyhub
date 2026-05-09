@@ -36,24 +36,17 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			// Only send changed values
-			const profileUpdates: { name?: string; image?: string; coverImage?: string } = {};
+			// Always update name, optionally update images
+			await updateUserProfileAction({ 
+				name: name || userProfile?.name || "",
+				image: mediaUrl || undefined,
+				coverImage: coverImageUrl || undefined
+			});
 			
-			if (name && name !== userProfile?.name) profileUpdates.name = name;
-			if (mediaUrl) profileUpdates.image = mediaUrl;
-			if (coverImageUrl) profileUpdates.coverImage = coverImageUrl;
-			
-			// Update profile if there are changes
-			if (Object.keys(profileUpdates).length > 0 || name) {
-				await updateUserProfileAction({ 
-					name: name || userProfile?.name || "",
-					image: mediaUrl || undefined,
-					coverImage: coverImageUrl || undefined
-				});
-			}
-			
+			// Update username and bio
 			await updateProfileInfoAction({ username, bio });
 			
+			// Update subscription prices if creator
 			if ((userProfile as any)?.isCreator && subPrice) {
 				await updateSubscriptionPriceAction(
 					Math.round(parseFloat(subPrice) * 100),
@@ -69,6 +62,7 @@ const UpdateProfileForm = () => {
 			router.refresh();
 		},
 		onError: (error) => {
+			console.error("Profile update error:", error);
 			toast({ title: "Error", description: error.message, variant: "destructive" });
 		},
 	});
