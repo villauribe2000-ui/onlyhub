@@ -21,19 +21,34 @@ export async function updateUserProfileAction({ name, image, coverImage }: { nam
 
 	if (!user) throw new Error("Unauthorized");
 
+	console.log('=== SERVER ACTION DEBUG ===');
+	console.log('Received name:', name);
+	console.log('Received image:', image);
+	console.log('Received coverImage:', coverImage);
+	console.log('User ID:', user.id);
+
 	const updatedFields: Partial<User> = {};
 
 	// Name is required
 	updatedFields.name = name;
 	
-	// Optional fields
-	if (image) updatedFields.image = image;
-	if (coverImage !== undefined) updatedFields.coverImage = coverImage;
+	// Optional fields - only update if provided
+	if (image !== undefined && image !== null && image !== '') {
+		updatedFields.image = image;
+	}
+	if (coverImage !== undefined && coverImage !== null && coverImage !== '') {
+		updatedFields.coverImage = coverImage;
+	}
+
+	console.log('Fields to update:', updatedFields);
 
 	const updatedUser = await prisma.user.update({
 		where: { id: user.id },
 		data: updatedFields,
 	});
+
+	console.log('Updated user:', { id: updatedUser.id, image: updatedUser.image, coverImage: updatedUser.coverImage });
+	console.log('===========================');
 
 	revalidatePath("/update-profile");
 	revalidatePath("/");
