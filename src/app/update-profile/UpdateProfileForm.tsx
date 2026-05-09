@@ -36,11 +36,21 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
+			// Prepare image values - use new if uploaded, otherwise keep current
+			const imageToSave = mediaUrl || userProfile?.image || undefined;
+			const coverToSave = coverImageUrl || (userProfile as any)?.coverImage || undefined;
+			
+			console.log('Saving profile with:', { 
+				name: name || userProfile?.name || "",
+				image: imageToSave,
+				coverImage: coverToSave 
+			});
+			
 			// Always update name, optionally update images
 			await updateUserProfileAction({ 
 				name: name || userProfile?.name || "",
-				image: mediaUrl || undefined,
-				coverImage: coverImageUrl || undefined
+				image: imageToSave,
+				coverImage: coverToSave
 			});
 			
 			// Update username and bio
