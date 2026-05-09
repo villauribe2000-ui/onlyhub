@@ -87,7 +87,7 @@ const UpdateProfileForm = () => {
 			if ((userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
 			if ((userProfile as any).freeTrialDays) setFreeTrialDays((userProfile as any).freeTrialDays.toString());
 		}
-	}, [userProfile]);
+	}, [userProfile?.id]); // Only run when user ID changes (initial load)
 
 	return (
 		<div className='px-2 md:px-10 my-10 max-w-lg mx-auto'>
