@@ -23,6 +23,26 @@ interface ProfilePageProps {
 const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 	const user = await prisma.user.findUnique({
 		where: { id: params.id },
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			image: true,
+			coverImage: true,
+			username: true,
+			bio: true,
+			isVerified: true,
+			isCreator: true,
+			subscriptionPrice: true,
+			subscriptionPrice3mo: true,
+			subscriptionPrice12mo: true,
+			freeTrialDays: true,
+			followersOverride: true,
+			lastActive: true,
+			isSuspended: true,
+			suspensionReason: true,
+			suspendedAt: true,
+		},
 	});
 
 	if (!user) return notFound();
