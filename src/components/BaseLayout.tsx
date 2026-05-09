@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import SuggestedProducts from "./SuggestedProducts";
 import BottomNav from "./BottomNav";
 import { getUserProfileAction } from "@/app/update-profile/actions";
+import prisma from "@/db/prisma";
 
 const BaseLayout = async ({
 	children,
@@ -22,6 +23,18 @@ const BaseLayout = async ({
 	const userProfile = await getUserProfileAction();
 	const isAdmin = kindeUser?.email === process.env.ADMIN_EMAIL;
 	const billingUrl = (process.env.STRIPE_BILLING_PORTAL_LINK_DEV || "") + "?prefilled_email=" + kindeUser?.email;
+
+	// Get user stats
+	const totalLikes = await prisma.post.aggregate({
+		where: { userId: userProfile?.id },
+		_sum: { likes: true },
+	});
+
+	const followersCount = await prisma.follow.count({
+		where: { followingId: userProfile?.id },
+	});
+
+	const displayFollowersCount = followersCount + ((userProfile as any)?.followersOverride || 0);
 
 	return (
 		<div className='flex max-w-[1400px] mx-auto relative w-full'>
@@ -47,6 +60,8 @@ const BaseLayout = async ({
 				isCreator={(userProfile as any)?.isCreator}
 				isVerified={(userProfile as any)?.isVerified}
 				balance={(userProfile as any)?.balance}
+				totalLikes={totalLikes._sum.likes || 0}
+				followersCount={displayFollowersCount}
 			/>
 		</div>
 	);

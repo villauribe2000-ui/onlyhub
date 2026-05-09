@@ -14,9 +14,11 @@ interface BottomNavProps {
 	isCreator?: boolean;
 	isVerified?: boolean;
 	balance?: number;
+	totalLikes?: number;
+	followersCount?: number;
 }
 
-const BottomNav = ({ image, name, username, isAdmin, billingUrl, isCreator, isVerified, balance }: BottomNavProps) => {
+const BottomNav = ({ image, name, username, isAdmin, billingUrl, isCreator, isVerified, balance, totalLikes, followersCount }: BottomNavProps) => {
 	const pathname = usePathname();
 
 	const { data: unreadData } = useQuery({
@@ -68,6 +70,8 @@ const BottomNav = ({ image, name, username, isAdmin, billingUrl, isCreator, isVe
 				isVerified={isVerified}
 				balance={balance}
 				isAdmin={isAdmin}
+				totalLikes={totalLikes}
+				followersCount={followersCount}
 			/>
 		</div>
 	);

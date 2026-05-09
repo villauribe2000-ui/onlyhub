@@ -18,10 +18,21 @@ interface UserPanelProps {
 	balance?: number;
 	isAdmin?: boolean;
 	isVerified?: boolean;
+	totalLikes?: number;
+	followersCount?: number;
 }
 
-const UserPanel = ({ name, username, image, email, billingUrl, triggerClassName, isCreator, isVerified, balance, isAdmin }: UserPanelProps) => {
+const UserPanel = ({ name, username, image, email, billingUrl, triggerClassName, isCreator, isVerified, balance, isAdmin, totalLikes, followersCount }: UserPanelProps) => {
 	const initials = name?.slice(0, 2).toUpperCase() || "U";
+
+	const formatNumber = (value: number) => {
+		if (value >= 1000000) {
+			return (value / 1000000).toFixed(1).replace(/\.?0+$/, '') + 'M';
+		} else if (value >= 1000) {
+			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+		}
+		return value.toString();
+	};
 
 	return (
 		<Sheet>
@@ -68,7 +79,9 @@ const UserPanel = ({ name, username, image, email, billingUrl, triggerClassName,
 							{isCreator ? (
 								<p className='text-xs text-muted-foreground mt-1'>Creador verificado</p>
 							) : (
-								<p className='text-xs text-muted-foreground mt-1'>0 Fans · 0 Seguidos</p>
+								<p className='text-xs text-muted-foreground mt-1'>
+									{formatNumber(totalLikes || 0)} Fans · {formatNumber(followersCount || 0)} Seguidores
+								</p>
 							)}
 							{isCreator && (
 								<p className='text-xs font-bold text-foreground mt-1'>
