@@ -93,6 +93,58 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
                 },
         });
 
+        const { mutate: subscribeToCreator } = useMutation({
+                mutationKey: ["subscribeToCreator"],
+                mutationFn: async (creatorId: string) => {
+                        const response = await fetch("/api/creator-dashboard/subscription/free", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ creatorId }),
+                        });
+                        const data = await response.json();
+                        if (!response.ok) {
+                                throw new Error(data.error || "Error al suscribirse");
+                        }
+                        return data;
+                },
+                onSuccess: () => {
+                        queryClient.invalidateQueries({ queryKey: ["posts"] });
+                        toast({
+                                title: "¡Suscrito!",
+                                description: "Te has suscrito correctamente. Ahora puedes ver el contenido privado.",
+                        });
+                },
+                onError: (error) => {
+                        toast({
+                                title: "Error",
+                                description: error.message,
+                                variant: "destructive",
+                        });
+                },
+        });
+
+        const handleSubscribeClick = async () => {
+                if (!user) {
+                        toast({
+                                title: "Error",
+                                description: "Debes iniciar sesión para suscribirte",
+                                variant: "destructive",
+                        });
+                        return;
+                }
+
+                // Check if subscription is free
+                const subscriptionPrice = (post.user as any).subscriptionPrice || 0;
+                
+                if (subscriptionPrice === 0) {
+                        // Free subscription - subscribe directly
+                        subscribeToCreator(post.user.id);
+                } else {
+                        // Paid subscription - redirect to subscription page
+                        window.location.href = `/subscribe/${post.user.id}`;
+                }
+        };
+
         // Check user's balance before showing donation modal
         const handleDonationClick = async () => {
                 if (!user) {
@@ -244,9 +296,12 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
                                                         <span className='text-xs'>1</span>
                                                 </div>
 
-                                                <Link className='of-primary-btn w-full !rounded-full !font-black' href={`/subscribe/${post.user.id}`}>
+                                                <button 
+                                                        className='of-primary-btn w-full !rounded-full !font-black' 
+                                                        onClick={handleSubscribeClick}
+                                                >
                                                         Subscribe to unlock
-                                                </Link>
+                                                </button>
                                         </div>
                                 </div>
                         )}
