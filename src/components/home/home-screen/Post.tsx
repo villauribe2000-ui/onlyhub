@@ -244,7 +244,7 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
                                                         <span className='text-xs'>1</span>
                                                 </div>
 
-                                                <Link className='of-primary-btn w-full !rounded-full !font-black' href={"/pricing"}>
+                                                <Link className='of-primary-btn w-full !rounded-full !font-black' href={`/subscribe/${post.user.id}`}>
                                                         Subscribe to unlock
                                                 </Link>
                                         </div>
