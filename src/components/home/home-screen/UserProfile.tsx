@@ -9,6 +9,7 @@ import EditAvatarButton from "./EditAvatarButton";
 import EditProfileInfo from "./EditProfileInfo";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriptionBox from "./SubscriptionBox";
+import { compactNumber } from "@/lib/utils";
 
 const UserProfile = async () => {
 	const admin = await prisma.user.findUnique({
@@ -36,6 +37,12 @@ const UserProfile = async () => {
 
 	const postCount = await prisma.post.count();
 	const totalLikes = await prisma.post.aggregate({ _sum: { likes: true } });
+	
+	// Get followers count for admin
+	const followersCount = await prisma.follow.count({
+		where: { followingId: admin?.id },
+	});
+	const displayFollowersCount = followersCount + (admin?.followersOverride || 0);
 
 	// Check if current user is subscribed to the admin (creator)
 	// Look for a subscription where userId matches current user's id
@@ -113,21 +120,25 @@ const UserProfile = async () => {
 					)}
 				</div>
 
-				{/* Stats */}
-				<div className='flex gap-6 mt-4 pt-4 border-t'>
+				{/* Stats - Estilo OnlyFans */}
+				<div className='grid grid-cols-4 gap-3 mt-4 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20'>
 					<div className='flex flex-col items-center'>
-						<span className='font-bold text-sm'>{postCount}</span>
-						<span className='text-xs text-muted-foreground'>Posts</span>
+						<span className='text-xl font-bold text-primary'>{compactNumber(postCount)}</span>
+						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Posts</span>
 					</div>
 					<div className='flex flex-col items-center'>
-						<span className='font-bold text-sm'>{totalLikes._sum.likes || 0}</span>
-						<span className='text-xs text-muted-foreground'>Likes</span>
+						<span className='text-xl font-bold text-primary'>{compactNumber(displayFollowersCount)}</span>
+						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Fans</span>
 					</div>
 					<div className='flex flex-col items-center'>
-						<span className='font-bold text-sm'>
-							{isSubscribed ? "Active" : "Free"}
+						<span className='text-xl font-bold text-primary'>{compactNumber(totalLikes._sum.likes || 0)}</span>
+						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Likes</span>
+					</div>
+					<div className='flex flex-col items-center'>
+						<span className='text-xl font-bold text-primary'>
+							{isSubscribed ? "✓" : "FREE"}
 						</span>
-						<span className='text-xs text-muted-foreground'>Plan</span>
+						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Plan</span>
 					</div>
 				</div>
 			</div>

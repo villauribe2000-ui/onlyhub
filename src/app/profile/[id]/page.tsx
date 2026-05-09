@@ -183,19 +183,19 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 					{user.username && <p className='text-muted-foreground text-sm mb-2'>@{user.username}</p>}
 					{user.bio && <p className='mt-2 text-sm leading-relaxed'>{user.bio}</p>}
 
-					{/* Estadísticas prominentes */}
-					<div className='grid grid-cols-3 gap-4 my-4 p-4 bg-muted/30 rounded-lg'>
+					{/* Estadísticas prominentes - Estilo OnlyFans */}
+					<div className='grid grid-cols-3 gap-4 my-4 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20'>
 						<div className='flex flex-col items-center'>
 							<span className='text-2xl font-bold text-primary'>{compactNumber(postCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium'>Posts</span>
+							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Posts</span>
 						</div>
-						<div className='flex flex-col items-center border-x border-border'>
+						<div className='flex flex-col items-center border-x border-primary/20'>
 							<span className='text-2xl font-bold text-primary'>{compactNumber(displayFollowersCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium'>Seguidores</span>
+							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Fans</span>
 						</div>
 						<div className='flex flex-col items-center'>
 							<span className='text-2xl font-bold text-primary'>{compactNumber(likesCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium'>Likes</span>
+							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Likes</span>
 						</div>
 					</div>
 
