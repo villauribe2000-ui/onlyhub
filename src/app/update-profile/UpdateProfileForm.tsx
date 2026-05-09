@@ -82,6 +82,8 @@ const UpdateProfileForm = () => {
 			setName(userProfile.name);
 			setUsername((userProfile as any).username || "");
 			setBio((userProfile as any).bio || "");
+			setMediaUrl(userProfile.image || "");
+			setCoverImageUrl((userProfile as any).coverImage || "");
 			if ((userProfile as any).subscriptionPrice) setSubPrice(((userProfile as any).subscriptionPrice / 100).toString());
 			if ((userProfile as any).subscriptionPrice3mo) setSubPrice3mo(((userProfile as any).subscriptionPrice3mo / 100).toString());
 			if ((userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
