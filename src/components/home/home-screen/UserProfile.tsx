@@ -68,11 +68,19 @@ const UserProfile = async () => {
 	console.log("UserProfile - subscription:", subscription);
 	console.log("UserProfile - isSubscribed (for display):", isSubscribed);
 
-	const compactNumber = (value: number) => {
+	const formatNumber = (value: number, type: 'videos' | 'likes' | 'followers') => {
 		if (value >= 1000000) {
-			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + ' Millones';
+			const formatted = (value / 1000000).toFixed(2).replace(/\.?0+$/, '');
+			return `${formatted} Millones`;
 		} else if (value >= 1000) {
-			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + ' Mil';
+			const formatted = (value / 1000).toFixed(1).replace(/\.?0+$/, '');
+			if (type === 'likes') {
+				return `${formatted}K Me gusta`;
+			} else if (type === 'followers') {
+				return `${formatted}K Seguidores`;
+			} else {
+				return `${formatted}K Videos`;
+			}
 		}
 		return value.toString();
 	};
@@ -86,6 +94,7 @@ const UserProfile = async () => {
 				videoCount={videoCount}
 				likesCount={totalLikes._sum.likes || 0}
 				followersCount={displayFollowersCount}
+				formatNumber={formatNumber}
 			/>
 
 			<div className='px-4 pb-4'>

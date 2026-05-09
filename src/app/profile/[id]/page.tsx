@@ -108,11 +108,19 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 	console.log("ProfilePage - subscription:", subscription);
 	console.log("ProfilePage - isSubscribedToCreator:", isSubscribedToCreator);
 
-	const compactNumber = (value: number) => {
+	const formatNumber = (value: number, type: 'videos' | 'likes' | 'followers') => {
 		if (value >= 1000000) {
-			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + ' Millones';
+			const formatted = (value / 1000000).toFixed(2).replace(/\.?0+$/, '');
+			return `${formatted} Millones`;
 		} else if (value >= 1000) {
-			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + ' Mil';
+			const formatted = (value / 1000).toFixed(1).replace(/\.?0+$/, '');
+			if (type === 'likes') {
+				return `${formatted}K Me gusta`;
+			} else if (type === 'followers') {
+				return `${formatted}K Seguidores`;
+			} else {
+				return `${formatted}K Videos`;
+			}
 		}
 		return value.toString();
 	};
@@ -148,15 +156,15 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 							</div>
 							<div className='flex items-center gap-4 text-white ml-8 mt-2'>
 								<div className='flex flex-col items-center'>
-									<span className='text-lg font-bold'>{compactNumber(videoCount)}</span>
+									<span className='text-lg font-bold'>{formatNumber(videoCount, 'videos')}</span>
 									<span className='text-xs opacity-90'>Videos</span>
 								</div>
 								<div className='flex flex-col items-center'>
-									<span className='text-lg font-bold'>{compactNumber(likesCount)}</span>
+									<span className='text-lg font-bold'>{formatNumber(likesCount, 'likes')}</span>
 									<span className='text-xs opacity-90'>Likes</span>
 								</div>
 								<div className='flex flex-col items-center'>
-									<span className='text-lg font-bold'>{compactNumber(displayFollowersCount)}</span>
+									<span className='text-lg font-bold'>{formatNumber(displayFollowersCount, 'followers')}</span>
 									<span className='text-xs opacity-90'>Seguidores</span>
 								</div>
 							</div>

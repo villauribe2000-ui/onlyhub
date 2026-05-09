@@ -13,9 +13,10 @@ interface CoverImageProps {
 	videoCount?: number;
 	likesCount?: number;
 	followersCount?: number;
+	formatNumber?: (value: number, type: 'videos' | 'likes' | 'followers') => string;
 }
 
-const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount = 0, followersCount = 0 }: CoverImageProps) => {
+const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount = 0, followersCount = 0, formatNumber }: CoverImageProps) => {
 	const [cover, setCover] = useState(coverImage || null);
 	const queryClient = useQueryClient();
 
@@ -25,14 +26,24 @@ const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount
 		queryClient.invalidateQueries({ queryKey: ["posts"] });
 	};
 
-	const compactNumber = (value: number) => {
+	const defaultFormatNumber = (value: number, type: 'videos' | 'likes' | 'followers') => {
 		if (value >= 1000000) {
-			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + ' Millones';
+			const formatted = (value / 1000000).toFixed(2).replace(/\.?0+$/, '');
+			return `${formatted} Millones`;
 		} else if (value >= 1000) {
-			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + ' Mil';
+			const formatted = (value / 1000).toFixed(1).replace(/\.?0+$/, '');
+			if (type === 'likes') {
+				return `${formatted}K Me gusta`;
+			} else if (type === 'followers') {
+				return `${formatted}K Seguidores`;
+			} else {
+				return `${formatted}K Videos`;
+			}
 		}
 		return value.toString();
 	};
+
+	const numberFormatter = formatNumber || defaultFormatNumber;
 
 	return (
 		<div className='h-48 overflow-hidden relative bg-gradient-to-br from-pink-500/30 to-purple-600/30'>
@@ -55,15 +66,15 @@ const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount
 				<h2 className='text-2xl font-bold mb-3 drop-shadow-lg'>{adminName}</h2>
 				<div className='flex items-center gap-4'>
 					<div className='flex flex-col items-center'>
-						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(videoCount)}</span>
+						<span className='text-lg font-bold drop-shadow-md'>{numberFormatter(videoCount, 'videos')}</span>
 						<span className='text-xs opacity-90'>Videos</span>
 					</div>
 					<div className='flex flex-col items-center'>
-						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(likesCount)}</span>
+						<span className='text-lg font-bold drop-shadow-md'>{numberFormatter(likesCount, 'likes')}</span>
 						<span className='text-xs opacity-90'>Likes</span>
 					</div>
 					<div className='flex flex-col items-center'>
-						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(followersCount)}</span>
+						<span className='text-lg font-bold drop-shadow-md'>{numberFormatter(followersCount, 'followers')}</span>
 						<span className='text-xs opacity-90'>Seguidores</span>
 					</div>
 				</div>
