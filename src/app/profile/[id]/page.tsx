@@ -108,11 +108,14 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 	console.log("ProfilePage - subscription:", subscription);
 	console.log("ProfilePage - isSubscribedToCreator:", isSubscribedToCreator);
 
-	const compactNumber = (value: number) =>
-		new Intl.NumberFormat("en-US", {
-			notation: "compact",
-			maximumFractionDigits: 1,
-		}).format(value);
+	const compactNumber = (value: number) => {
+		if (value >= 1000000) {
+			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+		} else if (value >= 1000) {
+			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+		}
+		return value.toString();
+	};
 
 	const tab = searchParams?.tab === "media" ? "media" : "posts";
 
@@ -143,19 +146,19 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 									{user.isVerified && <VerifiedBadge size='lg' className='text-white' />}
 								</div>
 							</div>
-							<div className='flex items-center gap-3 text-sm ml-8'>
-								<span className='inline-flex items-center gap-1'>
-									<Video className='w-4 h-4' />
-									{compactNumber(videoCount)}
-								</span>
-								<span className='inline-flex items-center gap-1'>
-									<Heart className='w-4 h-4' />
-									{compactNumber(likesCount)}
-								</span>
-								<span className='inline-flex items-center gap-1'>
-									<Users className='w-4 h-4' />
-									{compactNumber(displayFollowersCount)}
-								</span>
+							<div className='flex items-center gap-4 text-white ml-8 mt-2'>
+								<div className='flex flex-col items-center'>
+									<span className='text-lg font-bold'>{compactNumber(videoCount)}</span>
+									<span className='text-xs opacity-90'>Videos</span>
+								</div>
+								<div className='flex flex-col items-center'>
+									<span className='text-lg font-bold'>{compactNumber(likesCount)}</span>
+									<span className='text-xs opacity-90'>Likes</span>
+								</div>
+								<div className='flex flex-col items-center'>
+									<span className='text-lg font-bold'>{compactNumber(displayFollowersCount)}</span>
+									<span className='text-xs opacity-90'>Seguidores</span>
+								</div>
 							</div>
 						</div>
 					</div>

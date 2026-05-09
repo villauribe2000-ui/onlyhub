@@ -37,6 +37,14 @@ const UserProfile = async () => {
 
 	const postCount = await prisma.post.count();
 	const totalLikes = await prisma.post.aggregate({ _sum: { likes: true } });
+	const videoCount = await prisma.post.count({
+		where: {
+			mediaType: {
+				contains: "video",
+				mode: "insensitive",
+			},
+		},
+	});
 	
 	// Get followers count for admin
 	const followersCount = await prisma.follow.count({
@@ -60,12 +68,24 @@ const UserProfile = async () => {
 	console.log("UserProfile - subscription:", subscription);
 	console.log("UserProfile - isSubscribed (for display):", isSubscribed);
 
+	const compactNumber = (value: number) => {
+		if (value >= 1000000) {
+			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+		} else if (value >= 1000) {
+			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+		}
+		return value.toString();
+	};
+
 	return (
 		<div className='flex flex-col'>
 			<CoverImage
 				adminName={admin?.name!}
 				coverImage={(admin as any)?.coverImage}
 				isAdmin={isAdmin}
+				videoCount={videoCount}
+				likesCount={totalLikes._sum.likes || 0}
+				followersCount={displayFollowersCount}
 			/>
 
 			<div className='px-4 pb-4'>

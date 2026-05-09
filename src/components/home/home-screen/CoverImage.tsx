@@ -10,9 +10,12 @@ interface CoverImageProps {
 	adminName: string;
 	coverImage?: string | null;
 	isAdmin?: boolean;
+	videoCount?: number;
+	likesCount?: number;
+	followersCount?: number;
 }
 
-const CoverImage = ({ adminName, coverImage, isAdmin }: CoverImageProps) => {
+const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount = 0, followersCount = 0 }: CoverImageProps) => {
 	const [cover, setCover] = useState(coverImage || null);
 	const queryClient = useQueryClient();
 
@@ -20,6 +23,15 @@ const CoverImage = ({ adminName, coverImage, isAdmin }: CoverImageProps) => {
 		setCover(url);
 		await updateCoverImageAction(url);
 		queryClient.invalidateQueries({ queryKey: ["posts"] });
+	};
+
+	const compactNumber = (value: number) => {
+		if (value >= 1000000) {
+			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+		} else if (value >= 1000) {
+			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+		}
+		return value.toString();
 	};
 
 	return (
@@ -36,7 +48,26 @@ const CoverImage = ({ adminName, coverImage, isAdmin }: CoverImageProps) => {
 			)}
 
 			{/* Dark overlay */}
-			<div className='absolute inset-0 bg-black/10' aria-hidden='true' />
+			<div className='absolute inset-0 bg-black/20' aria-hidden='true' />
+
+			{/* Estadísticas en la portada */}
+			<div className='absolute top-4 left-4 text-white z-10'>
+				<h2 className='text-2xl font-bold mb-3 drop-shadow-lg'>{adminName}</h2>
+				<div className='flex items-center gap-4'>
+					<div className='flex flex-col items-center'>
+						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(videoCount)}</span>
+						<span className='text-xs opacity-90'>Videos</span>
+					</div>
+					<div className='flex flex-col items-center'>
+						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(likesCount)}</span>
+						<span className='text-xs opacity-90'>Likes</span>
+					</div>
+					<div className='flex flex-col items-center'>
+						<span className='text-lg font-bold drop-shadow-md'>{compactNumber(followersCount)}</span>
+						<span className='text-xs opacity-90'>Seguidores</span>
+					</div>
+				</div>
+			</div>
 
 			{/* Edit button for admin */}
 			{isAdmin && (
