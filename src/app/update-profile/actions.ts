@@ -15,7 +15,7 @@ export async function getUserProfileAction() {
 	return currentUser;
 }
 
-export async function updateUserProfileAction({ name, image, coverImage }: { name?: string; image?: string; coverImage?: string }) {
+export async function updateUserProfileAction({ name, image, coverImage }: { name: string; image?: string; coverImage?: string }) {
 	const { getUser } = getKindeServerSession();
 	const user = await getUser();
 
@@ -23,15 +23,12 @@ export async function updateUserProfileAction({ name, image, coverImage }: { nam
 
 	const updatedFields: Partial<User> = {};
 
-	if (name) updatedFields.name = name;
+	// Name is required
+	updatedFields.name = name;
+	
+	// Optional fields
 	if (image) updatedFields.image = image;
 	if (coverImage !== undefined) updatedFields.coverImage = coverImage;
-
-	// Only update if there are fields to update
-	if (Object.keys(updatedFields).length === 0) {
-		const currentUser = await prisma.user.findUnique({ where: { id: user.id } });
-		return { success: true, user: currentUser };
-	}
 
 	const updatedUser = await prisma.user.update({
 		where: { id: user.id },
