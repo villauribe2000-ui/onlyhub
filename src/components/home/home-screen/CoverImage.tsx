@@ -37,7 +37,7 @@ const CoverImage = ({ adminName, coverImage, isAdmin, videoCount = 0, likesCount
 			} else if (type === 'followers') {
 				return `${formatted}K Seguidores`;
 			} else {
-				return `${formatted}K Videos`;
+				return `${formatted}K Reproducciones`;
 			}
 		}
 		return value.toString();

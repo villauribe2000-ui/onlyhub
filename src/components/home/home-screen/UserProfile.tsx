@@ -79,7 +79,7 @@ const UserProfile = async () => {
 			} else if (type === 'followers') {
 				return `${formatted}K Seguidores`;
 			} else {
-				return `${formatted}K Videos`;
+				return `${formatted}K Reproducciones`;
 			}
 		}
 		return value.toString();

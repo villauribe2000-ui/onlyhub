@@ -119,7 +119,7 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 			} else if (type === 'followers') {
 				return `${formatted}K Seguidores`;
 			} else {
-				return `${formatted}K Videos`;
+				return `${formatted}K Reproducciones`;
 			}
 		}
 		return value.toString();
