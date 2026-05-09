@@ -147,10 +147,22 @@ const NewPostForm = () => {
 					{/* Image upload */}
 					<CldUploadWidget
 						signatureEndpoint='/api/sign-image'
+						options={{
+							sources: ['local', 'camera'],
+							multiple: false,
+							maxFiles: 1,
+						}}
 						onSuccess={(result, { widget }) => {
-							setMediaType("image");
-							setMediaUrl((result.info as CloudinaryUploadWidgetInfo).secure_url);
+							if (result?.info && typeof result.info !== 'string') {
+								setMediaType("image");
+								setMediaUrl(result.info.secure_url);
+								toast({ title: "Imagen subida correctamente" });
+							}
 							widget.close();
+						}}
+						onError={(error) => {
+							console.error('Upload error:', error);
+							toast({ title: "Error al subir imagen", description: "Intenta de nuevo", variant: "destructive" });
 						}}
 					>
 						{({ open }) => (
@@ -163,10 +175,23 @@ const NewPostForm = () => {
 					{/* Video upload */}
 					<CldUploadWidget
 						signatureEndpoint='/api/sign-image'
+						options={{
+							sources: ['local', 'camera'],
+							multiple: false,
+							maxFiles: 1,
+							resourceType: 'video',
+						}}
 						onSuccess={(result, { widget }) => {
-							setMediaType("video");
-							setMediaUrl((result.info as CloudinaryUploadWidgetInfo).secure_url);
+							if (result?.info && typeof result.info !== 'string') {
+								setMediaType("video");
+								setMediaUrl(result.info.secure_url);
+								toast({ title: "Video subido correctamente" });
+							}
 							widget.close();
+						}}
+						onError={(error) => {
+							console.error('Upload error:', error);
+							toast({ title: "Error al subir video", description: "Intenta de nuevo", variant: "destructive" });
 						}}
 					>
 						{({ open }) => (

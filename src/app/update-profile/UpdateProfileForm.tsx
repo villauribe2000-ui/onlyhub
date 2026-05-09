@@ -87,9 +87,23 @@ const UpdateProfileForm = () => {
 							</Avatar>
 							<CldUploadWidget
 								signatureEndpoint='/api/sign-image'
+								options={{
+									sources: ['local', 'camera'],
+									multiple: false,
+									maxFiles: 1,
+									cropping: true,
+									croppingAspectRatio: 1,
+								}}
 								onSuccess={(result, { widget }) => {
-									setMediaUrl((result.info as CloudinaryUploadWidgetInfo).secure_url);
+									if (result?.info && typeof result.info !== 'string') {
+										setMediaUrl(result.info.secure_url);
+										toast({ title: "Foto de perfil actualizada" });
+									}
 									widget.close();
+								}}
+								onError={(error) => {
+									console.error('Upload error:', error);
+									toast({ title: "Error al subir imagen", description: "Intenta de nuevo", variant: "destructive" });
 								}}
 							>
 								{({ open }) => (
