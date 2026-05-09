@@ -14,12 +14,16 @@ const InstallAppBanner = () => {
     const isAndroid = /Android/.test(userAgent);
     const isMobile = isIOS || isAndroid;
     
+    // Detectar si ya está usando la app instalada (PWA)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                        (window.navigator as any).standalone === true;
+    
     if (isIOS) setDeviceType('ios');
     else if (isAndroid) setDeviceType('android');
     
-    // Solo mostrar en móvil y si no han cerrado el banner antes
+    // Solo mostrar en móvil, si no han cerrado el banner antes, y si NO están usando la app instalada
     const bannerDismissed = localStorage.getItem('installBannerDismissed');
-    if (isMobile && !bannerDismissed) {
+    if (isMobile && !bannerDismissed && !isStandalone) {
       // Mostrar después de 3 segundos para no ser intrusivo
       setTimeout(() => {
         setShowBanner(true);
