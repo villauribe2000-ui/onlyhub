@@ -181,22 +181,18 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 						{user.isVerified && <VerifiedBadge size='md' />}
 					</div>
 					{user.username && <p className='text-muted-foreground text-sm mb-2'>@{user.username}</p>}
-					{user.bio && <p className='mt-2 text-sm leading-relaxed'>{user.bio}</p>}
-
-					{/* Estadísticas prominentes - Estilo OnlyFans */}
-					<div className='grid grid-cols-3 gap-4 my-4 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20'>
-						<div className='flex flex-col items-center'>
-							<span className='text-2xl font-bold text-primary'>{compactNumber(postCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Posts</span>
-						</div>
-						<div className='flex flex-col items-center border-x border-primary/20'>
-							<span className='text-2xl font-bold text-primary'>{compactNumber(displayFollowersCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Fans</span>
-						</div>
-						<div className='flex flex-col items-center'>
-							<span className='text-2xl font-bold text-primary'>{compactNumber(likesCount)}</span>
-							<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Likes</span>
-						</div>
+					
+					{/* Área de descripción más prominente */}
+					<div className='mt-4 mb-4 min-h-[80px]'>
+						{user.bio ? (
+							<p className='text-sm leading-relaxed bg-muted/30 p-4 rounded-lg border-l-4 border-primary/50'>
+								{user.bio}
+							</p>
+						) : (
+							<div className='text-sm text-muted-foreground bg-muted/20 p-4 rounded-lg border-l-4 border-muted-foreground/30 italic'>
+								Sin descripción aún...
+							</div>
+						)}
 					</div>
 
 					{!isMyProfile && (

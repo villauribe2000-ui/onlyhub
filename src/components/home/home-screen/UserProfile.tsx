@@ -113,35 +113,21 @@ const UserProfile = async () => {
 								)}
 							</div>
 							<p className='text-sm text-muted-foreground'>@{(admin as any)?.username || "onlyhub"}</p>
-							{(admin as any)?.bio && (
-								<p className='text-sm mt-1 leading-relaxed'>{(admin as any).bio}</p>
-							)}
+							{/* Área de descripción más prominente */}
+							<div className='mt-3 min-h-[60px]'>
+								{(admin as any)?.bio ? (
+									<p className='text-sm leading-relaxed bg-muted/30 p-3 rounded-lg border-l-4 border-primary/50'>
+										{(admin as any).bio}
+									</p>
+								) : (
+									<div className='text-sm text-muted-foreground bg-muted/20 p-3 rounded-lg border-l-4 border-muted-foreground/30 italic'>
+										Sin descripción aún...
+									</div>
+								)}
+							</div>
 						</div>
 					)}
 				</div>
-
-				{/* Stats - Estilo OnlyFans */}
-				<div className='grid grid-cols-4 gap-3 mt-4 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20'>
-					<div className='flex flex-col items-center'>
-						<span className='text-xl font-bold text-primary'>{compactNumber(postCount)}</span>
-						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Posts</span>
-					</div>
-					<div className='flex flex-col items-center'>
-						<span className='text-xl font-bold text-primary'>{compactNumber(displayFollowersCount)}</span>
-						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Fans</span>
-					</div>
-					<div className='flex flex-col items-center'>
-						<span className='text-xl font-bold text-primary'>{compactNumber(totalLikes._sum.likes || 0)}</span>
-						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Likes</span>
-					</div>
-					<div className='flex flex-col items-center'>
-						<span className='text-xl font-bold text-primary'>
-							{isSubscribed ? "✓" : "FREE"}
-						</span>
-						<span className='text-xs text-muted-foreground font-medium uppercase tracking-wide'>Plan</span>
-					</div>
-				</div>
-			</div>
 
 		{!isSubscribed && (
 			<SubscriptionBox
