@@ -110,9 +110,9 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 
 	const compactNumber = (value: number) => {
 		if (value >= 1000000) {
-			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+			return (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + ' Millones';
 		} else if (value >= 1000) {
-			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+			return (value / 1000).toFixed(1).replace(/\.?0+$/, '') + ' Mil';
 		}
 		return value.toString();
 	};
