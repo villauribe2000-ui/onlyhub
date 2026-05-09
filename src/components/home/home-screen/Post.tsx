@@ -13,6 +13,7 @@ import { deletePostAction, likePostAction, createDonationAction } from "./action
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import ActivityStatus from "@/components/ActivityStatus";
 
 type PostWithLikes = Prisma.PostGetPayload<{
         include: {
@@ -197,10 +198,17 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
                         <div className='flex items-center justify-between'>
                                 <div className='flex items-center gap-2.5'>
                                         <Link href={`/profile/${author.id}`} className='flex items-center gap-2.5 hover:opacity-90 transition-opacity'>
-                                                <Avatar className='w-9 h-9'>
-                                                        <AvatarImage src={author.image || "/user-placeholder.png"} className='object-cover' />
-                                                        <AvatarFallback>CN</AvatarFallback>
-                                                </Avatar>
+                                                <div className="relative">
+                                                        <Avatar className='w-9 h-9'>
+                                                                <AvatarImage src={author.image || "/user-placeholder.png"} className='object-cover' />
+                                                                <AvatarFallback>CN</AvatarFallback>
+                                                        </Avatar>
+                                                        {(author as any).lastActive && (
+                                                                <div className="absolute -bottom-0.5 -right-0.5">
+                                                                        <ActivityStatus lastActive={(author as any).lastActive} size="sm" />
+                                                                </div>
+                                                        )}
+                                                </div>
                                                 <div className='flex flex-col'>
                                                         <div className='flex items-center gap-1'>
                                                                 <span className='font-semibold text-sm leading-tight'>{author.name}</span>
@@ -208,7 +216,12 @@ const Post = ({ post, canViewPrivate, fromSearch = false }: { post: PostWithLike
                                                                         <VerifiedBadge size='sm' className='flex-shrink-0' />
                                                                 )}
                                                         </div>
-                                                        <span className='text-xs text-muted-foreground'>@{author.username || "usuario"} · {relativeTime}</span>
+                                                        <div className="flex items-center gap-2">
+                                                                <span className='text-xs text-muted-foreground'>@{author.username || "usuario"} · {relativeTime}</span>
+                                                                {(author as any).lastActive && (
+                                                                        <ActivityStatus lastActive={(author as any).lastActive} showText size="sm" />
+                                                                )}
+                                                        </div>
                                                 </div>
                                         </Link>
                                 </div>

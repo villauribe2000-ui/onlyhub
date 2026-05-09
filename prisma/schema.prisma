@@ -29,6 +29,7 @@ model User {
   freeTrialUsedAt       DateTime?
   followersOverride     Int?
   paypalLink            String?
+  lastActive            DateTime             @default(now())
   creatorRequest        CreatorRequest?
   donationsReceived     Donation[]           @relation("DonationCreator")
   donationsSent         Donation[]           @relation("DonationUser")

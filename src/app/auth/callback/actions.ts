@@ -2,6 +2,7 @@
 
 import prisma from "@/db/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { updateUserActivity } from "@/lib/updateActivity";
 
 export async function checkAuthStatus() {
 	try {
@@ -38,6 +39,8 @@ export async function checkAuthStatus() {
 			});
 		} else {
 			console.log('User already exists:', user.id);
+			// Update activity for existing user
+			await updateUserActivity(user.id);
 		}
 
 		return { success: true };

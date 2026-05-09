@@ -2,6 +2,7 @@
 
 import prisma from "@/db/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { updateUserActivity } from "@/lib/updateActivity";
 
 export async function getPostsAction() {
 	const { getUser } = getKindeServerSession();
@@ -14,7 +15,17 @@ export async function getPostsAction() {
 			isPublic: true,
 		},
 		include: {
-			user: true,
+			user: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					image: true,
+					username: true,
+					isVerified: true,
+					lastActive: true,
+				}
+			},
 			likesList: { where: { userId: user.id } },
 		},
 		orderBy: {
@@ -36,7 +47,17 @@ export async function getPostsByUserIdAction(userId: string) {
 			userId: userId,
 		},
 		include: {
-			user: true,
+			user: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					image: true,
+					username: true,
+					isVerified: true,
+					lastActive: true,
+				}
+			},
 			likesList: { where: { userId: user.id } },
 		},
 		orderBy: {
@@ -93,6 +114,9 @@ export async function likePostAction(postId: string) {
 		data: { likes: newLikes },
 	});
 
+	// Update user activity
+	await updateUserActivity(user.id);
+
 	return { success: true };
 }
 
@@ -148,6 +172,9 @@ export async function createDonationAction(creatorId: string, amountInCents: num
 			message: `Has recibido una donación de ${(amountInCents / 100).toFixed(2)} de ${user.name}.`,
 		},
 	});
+
+	// Update user activity
+	await updateUserActivity(user.id);
 
 	return { success: true, donation };
 }
