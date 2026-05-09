@@ -8,31 +8,35 @@ export default async function Home() {
 	const user = await getUser();
 	
 	// Create user in database if doesn't exist
-	if (user) {
+	if (user?.id && user?.email) {
 		try {
-			const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
+			const existingUser = await prisma.user.findUnique({ 
+				where: { id: user.id } 
+			});
 			
 			if (!existingUser) {
 				// Build name safely
 				const userName = [user.given_name, user.family_name]
 					.filter(Boolean)
-					.join(' ') || user.email?.split('@')[0] || 'Usuario';
+					.join(' ')
+					.trim() || user.email.split('@')[0] || 'Usuario';
 				
 				await prisma.user.create({
 					data: {
 						id: user.id,
-						email: user.email || '',
+						email: user.email,
 						name: userName,
 						image: user.picture || null,
 					},
 				});
+				
+				console.log('New user created:', user.id);
 			}
 		} catch (error) {
 			console.error('Error creating user:', error);
-			// Don't throw, just log - user might already exist from race condition
+			// Continue anyway - user might exist from race condition
 		}
 	}
 	
-	console.log(user);
 	return <main>{user ? <HomeScreen /> : <AuthScreen />}</main>;
 }
