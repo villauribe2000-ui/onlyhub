@@ -40,11 +40,14 @@ const UpdateProfileForm = () => {
 			const imageToSave = mediaUrl || userProfile?.image || undefined;
 			const coverToSave = coverImageUrl || (userProfile as any)?.coverImage || undefined;
 			
-			console.log('Saving profile with:', { 
-				name: name || userProfile?.name || "",
-				image: imageToSave,
-				coverImage: coverToSave 
-			});
+			console.log('=== PROFILE UPDATE DEBUG ===');
+			console.log('mediaUrl state:', mediaUrl);
+			console.log('coverImageUrl state:', coverImageUrl);
+			console.log('userProfile.image:', userProfile?.image);
+			console.log('userProfile.coverImage:', (userProfile as any)?.coverImage);
+			console.log('imageToSave:', imageToSave);
+			console.log('coverToSave:', coverToSave);
+			console.log('===========================');
 			
 			// Always update name, optionally update images
 			await updateUserProfileAction({ 
@@ -67,6 +70,7 @@ const UpdateProfileForm = () => {
 			}
 		},
 		onSuccess: () => {
+			console.log('Profile updated successfully');
 			toast({ title: "Perfil actualizado" });
 			router.push("/");
 			router.refresh();
