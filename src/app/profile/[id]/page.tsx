@@ -193,7 +193,8 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 							<div className='flex items-center gap-2 text-sm text-white ml-8'>
 								<div className='flex items-center gap-1'>
 									<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
-										<path d='M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h8v4H8v-4z'/>
+										<rect x="2" y="4" width="20" height="12" rx="2" ry="2" fill="currentColor"/>
+										<rect x="4" y="6" width="16" height="8" fill="none" stroke="currentColor" strokeWidth="0.5"/>
 									</svg>
 									<span className='font-semibold'>{formatVideos(videoCount)}</span>
 								</div>
@@ -207,7 +208,7 @@ const ProfilePage = async ({ params, searchParams }: ProfilePageProps) => {
 								<span className='text-white/60'>•</span>
 								<div className='flex items-center gap-1'>
 									<svg className='w-4 h-4' fill='currentColor' viewBox='0 0 24 24'>
-										<path d='M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2 1l-3 4v7h9zm-12.5-3c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S6 16.67 6 17.5 6.67 19 7.5 19zm3-7C9.67 12 9 11.33 9 10.5S9.67 9 10.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-3-7C6.67 5 6 4.33 6 3.5S6.67 2 7.5 2 9 2.67 9 3.5 8.33 5 7.5 5z'/>
+										<path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/>
 									</svg>
 									<span className='font-semibold'>{formatFollowers(displayFollowersCount)}</span>
 								</div>
