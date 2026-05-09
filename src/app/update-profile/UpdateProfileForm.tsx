@@ -69,7 +69,7 @@ const UpdateProfileForm = () => {
 	});
 
 	useEffect(() => {
-		if (userProfile) {
+		if (userProfile && !name) { // Only run once when data first loads
 			setName(userProfile.name);
 			setUsername((userProfile as any).username || "");
 			setBio((userProfile as any).bio || "");
@@ -80,7 +80,7 @@ const UpdateProfileForm = () => {
 			if ((userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
 			if ((userProfile as any).freeTrialDays) setFreeTrialDays((userProfile as any).freeTrialDays.toString());
 		}
-	}, [userProfile?.id]); // Only run when user ID changes (initial load)
+	}, [userProfile, name]); // Run when userProfile loads and name is empty
 
 	return (
 		<div className='px-2 md:px-10 my-10 max-w-lg mx-auto'>
