@@ -152,7 +152,9 @@ const UpdateProfileForm = () => {
 								}}
 								onSuccess={(result, { widget }) => {
 									if (result?.info && typeof result.info !== 'string') {
-										setMediaUrl(result.info.secure_url);
+										const url = result.info.secure_url;
+										setMediaUrl(url);
+										alert(`Imagen de perfil subida! URL: ${url}`);
 										toast({ title: "Foto de perfil actualizada" });
 									}
 									widget.close();
@@ -175,7 +177,11 @@ const UpdateProfileForm = () => {
 						</div>
 					</div>
 
-					<form onSubmit={(e) => { e.preventDefault(); updateProfile(); }} className='flex flex-col gap-4'>
+					<form onSubmit={(e) => { 
+						e.preventDefault(); 
+						alert(`Antes de updateProfile - mediaUrl: ${mediaUrl}, coverImageUrl: ${coverImageUrl}`);
+						updateProfile(); 
+					}} className='flex flex-col gap-4'>
 						<div>
 							<Label>Nombre</Label>
 							<Input
