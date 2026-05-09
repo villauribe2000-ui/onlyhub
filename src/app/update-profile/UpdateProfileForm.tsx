@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getUserProfileAction, updateUserProfileAction, updateProfileInfoAction, updateSubscriptionPriceAction } from "./actions";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 const UpdateProfileForm = () => {
 	const [mediaUrl, setMediaUrl] = useState("");
 	const [coverImageUrl, setCoverImageUrl] = useState("");
+	const mediaUrlRef = useRef("");
+	const coverImageUrlRef = useRef("");
 	const [name, setName] = useState("");
 	const [username, setUsername] = useState("");
 	const [bio, setBio] = useState("");
@@ -36,13 +38,16 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			alert(`mediaUrl: ${mediaUrl}\ncoverImageUrl: ${coverImageUrl}`);
+			const finalMediaUrl = mediaUrlRef.current || mediaUrl;
+			const finalCoverUrl = coverImageUrlRef.current || coverImageUrl;
+			
+			alert(`Guardando:\nmediaUrl: ${finalMediaUrl}\ncoverImageUrl: ${finalCoverUrl}`);
 			
 			// Always update name and images
 			await updateUserProfileAction({ 
 				name: name || userProfile?.name || "",
-				image: mediaUrl,
-				coverImage: coverImageUrl
+				image: finalMediaUrl,
+				coverImage: finalCoverUrl
 			});
 			
 			// Update username and bio
@@ -75,6 +80,8 @@ const UpdateProfileForm = () => {
 			setBio((userProfile as any).bio || "");
 			setMediaUrl(userProfile.image || "");
 			setCoverImageUrl((userProfile as any).coverImage || "");
+			mediaUrlRef.current = userProfile.image || "";
+			coverImageUrlRef.current = (userProfile as any).coverImage || "";
 			if ((userProfile as any).subscriptionPrice) setSubPrice(((userProfile as any).subscriptionPrice / 100).toString());
 			if ((userProfile as any).subscriptionPrice3mo) setSubPrice3mo(((userProfile as any).subscriptionPrice3mo / 100).toString());
 			if ((userProfile as any).subscriptionPrice12mo) setSubPrice12mo(((userProfile as any).subscriptionPrice12mo / 100).toString());
@@ -109,7 +116,9 @@ const UpdateProfileForm = () => {
 							}}
 							onSuccess={(result, { widget }) => {
 								if (result?.info && typeof result.info !== 'string') {
-									setCoverImageUrl(result.info.secure_url);
+									const url = result.info.secure_url;
+									setCoverImageUrl(url);
+									coverImageUrlRef.current = url;
 									toast({ title: "Foto de portada actualizada" });
 								}
 								widget.close();
@@ -154,6 +163,7 @@ const UpdateProfileForm = () => {
 									if (result?.info && typeof result.info !== 'string') {
 										const url = result.info.secure_url;
 										setMediaUrl(url);
+										mediaUrlRef.current = url;
 										alert(`Imagen de perfil subida! URL: ${url}`);
 										toast({ title: "Foto de perfil actualizada" });
 									}
