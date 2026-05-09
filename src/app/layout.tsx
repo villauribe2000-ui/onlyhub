@@ -34,20 +34,20 @@ export default function RootLayout({
 				<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 				<meta name="apple-mobile-web-app-title" content="OnlyHub" />
 				<meta name="mobile-web-app-capable" content="yes" />
-				<link rel="apple-touch-icon" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="57x57" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="60x60" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="72x72" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="76x76" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="114x114" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="120x120" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="144x144" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="152x152" href="/logo.png" />
-				<link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
-				<link rel="icon" type="image/png" sizes="192x192" href="/logo.png" />
-				<link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
-				<link rel="icon" type="image/png" sizes="96x96" href="/logo.png" />
-				<link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
+				<link rel="apple-touch-icon" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="57x57" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="60x60" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="72x72" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="76x76" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="114x114" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="120x120" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="144x144" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="152x152" href="/app-icon.jpg" />
+				<link rel="apple-touch-icon" sizes="180x180" href="/app-icon.jpg" />
+				<link rel="icon" type="image/png" sizes="192x192" href="/app-icon.jpg" />
+				<link rel="icon" type="image/png" sizes="32x32" href="/app-icon.jpg" />
+				<link rel="icon" type="image/png" sizes="96x96" href="/app-icon.jpg" />
+				<link rel="icon" type="image/png" sizes="16x16" href="/app-icon.jpg" />
 			</head>
 			<body className={inter.className}>
 				<ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
