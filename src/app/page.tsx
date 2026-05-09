@@ -9,22 +9,27 @@ export default async function Home() {
 	
 	// Create user in database if doesn't exist
 	if (user) {
-		const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
-		
-		if (!existingUser) {
-			// Build name from available fields
-			let userName = user.given_name && user.family_name 
-				? `${user.given_name} ${user.family_name}`
-				: user.given_name || user.family_name || user.email?.split('@')[0] || 'Usuario';
+		try {
+			const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
 			
-			await prisma.user.create({
-				data: {
-					id: user.id,
-					email: user.email!,
-					name: userName,
-					image: user.picture || null,
-				},
-			});
+			if (!existingUser) {
+				// Build name safely
+				const userName = [user.given_name, user.family_name]
+					.filter(Boolean)
+					.join(' ') || user.email?.split('@')[0] || 'Usuario';
+				
+				await prisma.user.create({
+					data: {
+						id: user.id,
+						email: user.email || '',
+						name: userName,
+						image: user.picture || null,
+					},
+				});
+			}
+		} catch (error) {
+			console.error('Error creating user:', error);
+			// Don't throw, just log - user might already exist from race condition
 		}
 	}
 	
