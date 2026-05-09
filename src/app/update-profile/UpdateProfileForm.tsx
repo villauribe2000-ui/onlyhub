@@ -36,7 +36,11 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			await updateUserProfileAction({ name, image: mediaUrl, coverImage: coverImageUrl });
+			await updateUserProfileAction({ 
+				name, 
+				image: mediaUrl || userProfile?.image || "", 
+				coverImage: coverImageUrl || (userProfile as any)?.coverImage || undefined 
+			});
 			await updateProfileInfoAction({ username, bio });
 			if ((userProfile as any)?.isCreator && subPrice) {
 				await updateSubscriptionPriceAction(
