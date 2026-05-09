@@ -12,12 +12,17 @@ export default async function Home() {
 		const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
 		
 		if (!existingUser) {
+			// Build name from available fields
+			let userName = user.given_name && user.family_name 
+				? `${user.given_name} ${user.family_name}`
+				: user.given_name || user.family_name || user.email?.split('@')[0] || 'Usuario';
+			
 			await prisma.user.create({
 				data: {
 					id: user.id,
 					email: user.email!,
-					name: user.given_name + " " + user.family_name,
-					image: user.picture,
+					name: userName,
+					image: user.picture || null,
 				},
 			});
 		}
