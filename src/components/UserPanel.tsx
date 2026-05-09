@@ -80,7 +80,7 @@ const UserPanel = ({ name, username, image, email, billingUrl, triggerClassName,
 								<p className='text-xs text-muted-foreground mt-1'>Creador verificado</p>
 							) : (
 								<p className='text-xs text-muted-foreground mt-1'>
-									{formatNumber(totalLikes || 0)} Fans · {formatNumber(followersCount || 0)} Seguidores
+									{formatNumber(totalLikes || 0)} Likes · {formatNumber(followersCount || 0)} Seguidores
 								</p>
 							)}
 							{isCreator && (
