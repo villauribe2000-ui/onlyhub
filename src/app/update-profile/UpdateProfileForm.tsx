@@ -36,12 +36,7 @@ const UpdateProfileForm = () => {
 	const { mutate: updateProfile, isPending } = useMutation({
 		mutationKey: ["updateProfile"],
 		mutationFn: async () => {
-			console.log('=== PROFILE UPDATE DEBUG ===');
-			console.log('mediaUrl state:', mediaUrl);
-			console.log('coverImageUrl state:', coverImageUrl);
-			console.log('userProfile.image:', userProfile?.image);
-			console.log('userProfile.coverImage:', (userProfile as any)?.coverImage);
-			console.log('===========================');
+			alert(`mediaUrl: ${mediaUrl}\ncoverImageUrl: ${coverImageUrl}`);
 			
 			// Always update name and images
 			await updateUserProfileAction({ 
@@ -64,13 +59,11 @@ const UpdateProfileForm = () => {
 			}
 		},
 		onSuccess: () => {
-			console.log('Profile updated successfully');
 			toast({ title: "Perfil actualizado" });
 			router.push("/");
 			router.refresh();
 		},
 		onError: (error) => {
-			console.error("Profile update error:", error);
 			toast({ title: "Error", description: error.message, variant: "destructive" });
 		},
 	});
