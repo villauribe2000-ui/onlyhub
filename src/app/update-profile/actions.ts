@@ -27,16 +27,15 @@ export async function updateUserProfileAction({ name, image, coverImage }: { nam
 	console.log('Received coverImage:', coverImage);
 	console.log('User ID:', user.id);
 
-	const updatedFields: Partial<User> = {};
+	const updatedFields: Partial<User> = {
+		name: name,
+	};
 
-	// Name is required
-	updatedFields.name = name;
-	
-	// Optional fields - only update if provided
-	if (image !== undefined && image !== null && image !== '') {
+	// Always update image and coverImage fields (even if empty string)
+	if (image !== undefined) {
 		updatedFields.image = image;
 	}
-	if (coverImage !== undefined && coverImage !== null && coverImage !== '') {
+	if (coverImage !== undefined) {
 		updatedFields.coverImage = coverImage;
 	}
 
